@@ -2,45 +2,17 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
+    /* Основные стили */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
       padding: 20px;
       color: #333;
-      transition: transform 0.5s ease;
-    }
-
-    .orientation-notice {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      color: white;
-      z-index: 1000;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-    
-    .orientation-notice.visible {
-      display: flex;
-    }
-    
-    .orientation-notice h2 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    
-    .orientation-notice p {
-      font-size: 18px;
-      max-width: 80%;
+      overflow-x: hidden;
     }
 
     .table-wrapper {
@@ -235,104 +207,112 @@
     .success {
       color: #2e7d32;
     }
-    
-    /* Стили для мобильной адаптации с поворотом */
-    @media only screen and (max-width: 768px) {
-      body.rotated {
+
+    /* Стили для мобильных устройств */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
         transform: rotate(90deg);
-        transform-origin: center center;
+        transform-origin: left top;
         width: 100vh;
         height: 100vw;
         position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -50vw;
-        margin-left: -50vh;
-        overflow-x: auto;
-        padding: 10px;
+        top: 100%;
+        left: 0;
+        overflow-x: hidden;
       }
       
       .table-wrapper {
-        max-height: 80vh;
-        margin-top: 20px;
+        max-height: calc(100vw - 20px);
+        margin-top: 10px;
       }
       
-      /* Увеличиваем размер шрифта для лучшей читаемости */
-      td, th {
-        font-size: 11px;
-      }
-      
-      /* Увеличиваем область клика для кнопок переключения */
-      .toggle-btn {
-        width: 16px;
-        height: 16px;
-        line-height: 16px;
+      .status-message {
+        margin: 5px 0;
+        padding: 8px;
         font-size: 12px;
       }
       
-      /* Увеличиваем область клика для ячеек таблицы */
-      #main-table td {
-        min-width: 28px;
+      #date-picker {
+        font-size: 12px;
+        padding: 6px;
       }
       
-      /* Корректируем размеры фиксированных столбцов */
+      /* Улучшение отображения для мобильных */
+      td, th {
+        font-size: 11px;
+        height: 25px;
+      }
+      
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) {
         width: 40px;
         min-width: 40px;
         max-width: 40px;
       }
+      
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
-        width: 90px;
-        min-width: 90px;
-        max-width: 90px;
         left: 40px;
+        width: 100px;
+        min-width: 100px;
+        max-width: 100px;
       }
       
-      /* Улучшаем отображение выбора даты */
-      #date-picker {
-        font-size: 12px;
-        padding: 6px;
-      }
-      
-      /* Улучшаем отображение статусных сообщений */
-      .status-message {
-        font-size: 12px;
-        padding: 8px;
-        margin: 8px 0;
+      #time-row th .hour,
+      #time-row th .minute {
+        font-size: 10px;
       }
     }
 
-    /* Дополнительные стили для очень маленьких экранов */
-    @media only screen and (max-width: 350px) {
-      td, th {
-        font-size: 10px;
-        height: 25px;
+    /* Портретный режим - просьба повернуть устройство */
+    .rotate-message {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: white;
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .rotate-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @media (max-width: 768px) and (orientation: portrait) {
+      .rotate-message {
+        display: flex;
       }
       
-      #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
-      }
-      #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        width: 80px;
-        min-width: 80px;
-        max-width: 80px;
-        left: 35px;
+      body {
+        overflow: hidden;
       }
     }
   </style>
 </head>
 <body>
-  <div class="orientation-notice" id="orientationNotice">
-    <h2>Пожалуйста, переверните устройство</h2>
-    <p>Для лучшего отображения таблицы поверните телефон в альбомную ориентацию</p>
+  <!-- Сообщение о необходимости поворота устройства -->
+  <div class="rotate-message">
+    <div class="rotate-icon">↻</div>
+    <h2>Пожалуйста, поверните устройство</h2>
+    <p>Для правильного отображения приложения используйте альбомный режим</p>
   </div>
-  
+
   <div id="status" class="status-message">Выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
@@ -366,33 +346,12 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status'),
-          orientationNotice = document.getElementById('orientationNotice'),
-          body = document.body;
+          statusEl = document.getElementById('status');
 
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map(); // Для управления запросами
-
-    // Функция для проверки ориентации устройства
-    function checkOrientation() {
-      if (window.innerWidth <= 768) {
-        if (window.innerHeight > window.innerWidth) {
-          // Портретная ориентация
-          orientationNotice.classList.add('visible');
-          body.classList.remove('rotated');
-        } else {
-          // Альбомная ориентация
-          orientationNotice.classList.remove('visible');
-          body.classList.add('rotated');
-        }
-      } else {
-        // На компьютере
-        orientationNotice.classList.remove('visible');
-        body.classList.remove('rotated');
-      }
-    }
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -644,13 +603,6 @@
       buildHeaders();
       buildBody();
       
-      // Проверяем ориентацию при загрузке
-      checkOrientation();
-      
-      // Добавляем обработчики изменения размера окна
-      window.addEventListener('resize', checkOrientation);
-      window.addEventListener('orientationchange', checkOrientation);
-      
       datePicker.addEventListener('change', loadData);
       
       document.addEventListener('mouseover', function(e) {
@@ -690,6 +642,24 @@
       
       // Автоматическая загрузка данных при инициализации
       setTimeout(loadData, 500);
+      
+      // Обработка изменения ориентации
+      const handleOrientationChange = () => {
+        if (window.innerHeight > window.innerWidth) {
+          // Портретный режим - показываем сообщение
+          document.querySelector('.rotate-message').style.display = 'flex';
+        } else {
+          // Альбомный режим - скрываем сообщение
+          document.querySelector('.rotate-message').style.display = 'none';
+        }
+      };
+      
+      // Слушаем изменение ориентации и размера окна
+      window.addEventListener('orientationchange', handleOrientationChange);
+      window.addEventListener('resize', handleOrientationChange);
+      
+      // Проверяем начальную ориентацию
+      handleOrientationChange();
     }
 
     // Запуск инициализации при загрузке страницы
