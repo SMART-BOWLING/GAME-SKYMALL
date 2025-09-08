@@ -2,15 +2,46 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* Основные стили остаются без изменений */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
       padding: 20px;
       color: #333;
+      transition: transform 0.5s ease;
+    }
+
+    .orientation-notice {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: white;
+      z-index: 1000;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .orientation-notice.visible {
+      display: flex;
+    }
+    
+    .orientation-notice h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .orientation-notice p {
+      font-size: 18px;
+      max-width: 80%;
     }
 
     .table-wrapper {
@@ -205,10 +236,10 @@
     .success {
       color: #2e7d32;
     }
-
+    
     /* Стили для мобильной адаптации с поворотом */
     @media only screen and (max-width: 768px) {
-      body {
+      body.rotated {
         transform: rotate(90deg);
         transform-origin: center center;
         width: 100vh;
@@ -218,7 +249,7 @@
         left: 50%;
         margin-top: -50vw;
         margin-left: -50vh;
-        overflow-x: hidden;
+        overflow-x: auto;
         padding: 10px;
       }
       
@@ -298,6 +329,11 @@
   </style>
 </head>
 <body>
+  <div class="orientation-notice" id="orientationNotice">
+    <h2>Пожалуйста, переверните устройство</h2>
+    <p>Для лучшего отображения таблицы поверните телефон в альбомную ориентацию</p>
+  </div>
+  
   <div id="status" class="status-message">Выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
@@ -331,12 +367,33 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status');
+          statusEl = document.getElementById('status'),
+          orientationNotice = document.getElementById('orientationNotice'),
+          body = document.body;
 
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map(); // Для управления запросами
+
+    // Функция для проверки ориентации устройства
+    function checkOrientation() {
+      if (window.innerWidth <= 768) {
+        if (window.innerHeight > window.innerWidth) {
+          // Портретная ориентация
+          orientationNotice.classList.add('visible');
+          body.classList.remove('rotated');
+        } else {
+          // Альбомная ориентация
+          orientationNotice.classList.remove('visible');
+          body.classList.add('rotated');
+        }
+      } else {
+        // На компьютере
+        orientationNotice.classList.remove('visible');
+        body.classList.remove('rotated');
+      }
+    }
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -587,6 +644,13 @@
     function init() {
       buildHeaders();
       buildBody();
+      
+      // Проверяем ориентацию при загрузке
+      checkOrientation();
+      
+      // Добавляем обработчики изменения размера окна
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', checkOrientation);
       
       datePicker.addEventListener('change', loadData);
       
