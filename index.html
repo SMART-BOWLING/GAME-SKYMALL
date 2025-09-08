@@ -2,33 +2,15 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 10px;
+      padding: 20px;
       color: #333;
-      overflow-x: auto;
-    }
-
-    .mobile-controls {
-      display: none;
-      margin-bottom: 10px;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .mobile-controls button {
-      padding: 8px 12px;
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
     }
 
     .table-wrapper {
@@ -36,15 +18,14 @@
       overflow-y: visible;
       position: relative;
       -webkit-overflow-scrolling: touch;
-      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
-      max-height: 80vh;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
-      table-layout: fixed;
+      table-layout: auto; /* Изменено с fixed на auto */
       background-color: white;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       border-radius: 12px;
@@ -52,7 +33,6 @@
     }
 
     td, th {
-      width: 30px;
       height: 30px;
       text-align: center;
       font-size: 13px;
@@ -83,7 +63,7 @@
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 50px;
+      width: 50px; /* Фиксированная ширина */
       min-width: 50px;
       max-width: 50px;
     }
@@ -93,7 +73,7 @@
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 120px;
+      width: 120px; /* Фиксированная ширина */
       min-width: 120px;
       max-width: 120px;
       overflow: hidden;
@@ -122,6 +102,7 @@
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
+      width: auto; /* Автоматическая ширина */
     }
     #time-row th div {
       display: flex;
@@ -224,114 +205,55 @@
     .success {
       color: #2e7d32;
     }
-    
-    /* Стили для мобильной адаптации */
-    @media only screen and (max-width: 768px) {
+
+    /* Медиа-запрос для мобильных устройств */
+    @media (max-width: 768px) {
       body {
-        padding: 5px;
-      }
-      
-      .mobile-controls {
-        display: flex;
+        padding: 10px;
       }
       
       .table-wrapper {
-        max-height: 70vh;
+        overflow-x: scroll;
       }
       
-      /* Увеличиваем размер шрифта для лучшей читаемости */
-      td, th {
-        font-size: 11px;
-        height: 28px;
+      table {
+        min-width: 100%;
       }
       
-      /* Увеличиваем область клика для кнопок переключения */
-      .toggle-btn {
-        width: 16px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 12px;
-      }
-      
-      /* Корректируем размеры фиксированных столбцов */
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) {
-        width: 40px;
+        width: 40px; /* Уменьшенная ширина для мобильных */
         min-width: 40px;
         max-width: 40px;
       }
+      
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
-        width: 90px;
-        min-width: 90px;
-        max-width: 90px;
-        left: 40px;
+        left: 40px; /* Соответствует новой ширине первого столбца */
+        width: 100px; /* Уменьшенная ширина для мобильных */
+        min-width: 100px;
+        max-width: 100px;
       }
       
-      /* Улучшаем отображение выбора даты */
-      #date-picker {
-        font-size: 12px;
-        padding: 6px;
-      }
-      
-      /* Улучшаем отображение статусных сообщений */
-      .status-message {
-        font-size: 12px;
-        padding: 8px;
-        margin: 8px 0;
-      }
-      
-      /* Упрощаем отображение времени для мобильных */
-      #time-row th div {
-        flex-direction: row;
-        gap: 2px;
+      td, th {
+        font-size: 12px; /* Уменьшенный размер шрифта */
+        height: 25px;
       }
       
       #time-row th .hour,
       #time-row th .minute {
-        font-size: 10px;
+        font-size: 10px; /* Уменьшенный размер шрифта для времени */
       }
-    }
-
-    /* Дополнительные стили для очень маленьких экранов */
-    @media only screen and (max-width: 350px) {
-      td, th {
-        font-size: 10px;
+      
+      .toggle-btn {
+        font-size: 12px;
         height: 25px;
-      }
-      
-      #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
-      }
-      #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        width: 80px;
-        min-width: 80px;
-        max-width: 80px;
-        left: 35px;
-      }
-      
-      .mobile-controls {
-        flex-direction: column;
-      }
-      
-      .mobile-controls button {
-        width: 100%;
+        line-height: 22px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="mobile-controls" id="mobileControls">
-    <button onclick="scrollToColumn(0)">В начало</button>
-    <button onclick="showFirstGroups()">Показать первые 4 часа</button>
-    <button onclick="toggleAllMobile()">Развернуть всё</button>
-    <button onclick="scrollToCurrentTime()">Текущее время</button>
-  </div>
-  
   <div id="status" class="status-message">Выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
@@ -365,80 +287,12 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status'),
-          mobileControls = document.getElementById('mobileControls'),
-          tableWrapper = document.querySelector('.table-wrapper');
+          statusEl = document.getElementById('status');
 
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map(); // Для управления запросами
-    let isMobileView = false;
-
-    // Функции для мобильного управления
-    function scrollToColumn(minute) {
-      const cell = document.querySelector(`#time-row th:nth-child(${minute + 3})`);
-      if (cell) {
-        tableWrapper.scrollLeft = cell.offsetLeft - 130; // 130px для учета фиксированных столбцов
-      }
-    }
-
-    function scrollToCurrentTime() {
-      const now = new Date();
-      const minutes = now.getHours() * 60 + now.getMinutes();
-      scrollToColumn(minutes);
-    }
-
-    // Показать только первые 4 часа (первые 16 групп)
-    function showFirstGroups() {
-      allGroups.forEach((group, index) => {
-        const isFirst4Hours = index < 16; // 4 часа * 4 группы в час = 16 групп
-        group.forEach(colIndex => {
-          [timeRow, letterRow].forEach(row => {
-            if (row.children[colIndex+2]) {
-              if (isFirst4Hours) {
-                row.children[colIndex+2].classList.remove('hidden-column');
-              } else {
-                row.children[colIndex+2].classList.add('hidden-column');
-              }
-            }
-          });
-          
-          tableBody.querySelectorAll('tr').forEach(tr => {
-            if (tr.children[colIndex+2]) {
-              if (isFirst4Hours) {
-                tr.children[colIndex+2].classList.remove('hidden-column');
-              } else {
-                tr.children[colIndex+2].classList.add('hidden-column');
-              }
-            }
-          });
-        });
-        
-        // Обновляем кнопки переключения
-        if (timeRow.children[group[0]+2]) {
-          const btn = timeRow.children[group[0]+2].querySelector('.toggle-btn');
-          if (btn) {
-            btn.textContent = isFirst4Hours ? '–' : '+';
-          }
-        }
-      });
-    }
-
-    function toggleAllMobile() {
-      const allHidden = areAllHidden();
-      toggleAll(!allHidden);
-      
-      // Обновляем текст кнопки
-      const button = document.querySelector('.mobile-controls button:nth-child(3)');
-      button.textContent = allHidden ? 'Свернуть всё' : 'Развернуть всё';
-    }
-
-    // Проверяем, мобильное ли устройство
-    function checkMobile() {
-      isMobileView = window.innerWidth <= 768;
-      return isMobileView;
-    }
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -490,11 +344,7 @@
       const btn = document.createElement('div');
       btn.className = 'toggle-btn';
       btn.title = title;
-      
-      // На мобильном показываем только первые 4 часа, остальное скрываем
-      const isFirst4Hours = idxs[0] <= 4 * 60; // Первые 4 часа (240 минут)
-      btn.textContent = isMobileView && !isFirst4Hours ? '+' : '–';
-      
+      btn.textContent = '+';
       let last = 0;
       btn.onclick = () => {
         const now = Date.now();
@@ -563,18 +413,6 @@
       }
       
       tableBody.appendChild(frag);
-    }
-
-    // На мобильных устройствах скрываем все столбцы кроме первых 4 часов
-    function setupMobileView() {
-      if (!isMobileView) return;
-      
-      allGroups.forEach((group, index) => {
-        const isFirst4Hours = index < 16; // 4 часа * 4 группы в час = 16 групп
-        if (!isFirst4Hours) {
-          toggleGroup(group); // Скрываем группы после первых 4 часов
-        }
-      });
     }
 
     // Очистка данных таблицы
@@ -703,19 +541,8 @@
 
     // Инициализация при загрузке страницы
     function init() {
-      // Проверяем, мобильное ли устройство
-      checkMobile();
-      
       buildHeaders();
       buildBody();
-      
-      // На мобильных устройствах настраиваем отображение
-      if (isMobileView) {
-        setupMobileView();
-      } else {
-        // На ПК сворачиваем все группы
-        setTimeout(() => toggleAll(true), 100);
-      }
       
       datePicker.addEventListener('change', loadData);
       
@@ -747,24 +574,11 @@
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
       
+      // Сворачиваем все группы при загрузке
+      setTimeout(() => toggleAll(true), 100);
+      
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
-      });
-      
-      // Обработчик изменения размера окна
-      window.addEventListener('resize', function() {
-        const wasMobile = isMobileView;
-        checkMobile();
-        
-        // Если переключились между мобильным и десктопным видом
-        if (wasMobile !== isMobileView) {
-          if (isMobileView) {
-            setupMobileView();
-          } else {
-            // На десктопе возвращаем все группы в свернутое состояние
-            setTimeout(() => toggleAll(true), 100);
-          }
-        }
       });
       
       // Автоматическая загрузка данных при инициализации
