@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
+    /* Основные стили остаются без изменений */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 10px;
+      padding: 20px;
       color: #333;
-      overflow-x: auto;
-      min-width: 1000px; /* Минимальная ширина для сохранения структуры */
-    }
-
-    .container {
-      max-width: 100%;
-      overflow: visible;
     }
 
     .table-wrapper {
@@ -25,12 +19,8 @@
       overflow-y: visible;
       position: relative;
       -webkit-overflow-scrolling: touch;
-      width: 100%;
+      max-width: 100%;
       margin: 0 auto;
-      border: 1px solid #d7dce3;
-      border-radius: 12px;
-      background: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     table {
@@ -38,6 +28,8 @@
       width: 100%;
       table-layout: fixed;
       background-color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
       min-width: 800px;
     }
 
@@ -204,9 +196,6 @@
       border-radius: 5px;
       background-color: #f8f9fa;
       font-size: 14px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .error {
@@ -218,80 +207,118 @@
       color: #2e7d32;
     }
 
-    /* Мобильная оптимизация */
-    @media (max-width: 768px) {
+    /* Стили для мобильной адаптации с поворотом */
+    @media only screen and (max-width: 768px) {
       body {
-        padding: 5px;
+        transform: rotate(90deg);
+        transform-origin: center center;
+        width: 100vh;
+        height: 100vw;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -50vw;
+        margin-left: -50vh;
+        overflow-x: hidden;
+        padding: 10px;
       }
       
       .table-wrapper {
-        border-radius: 8px;
+        max-height: 80vh;
+        margin-top: 20px;
       }
       
+      /* Увеличиваем размер шрифта для лучшей читаемости */
+      td, th {
+        font-size: 11px;
+      }
+      
+      /* Увеличиваем область клика для кнопок переключения */
+      .toggle-btn {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 12px;
+      }
+      
+      /* Увеличиваем область клика для ячеек таблицы */
+      #main-table td {
+        min-width: 28px;
+      }
+      
+      /* Корректируем размеры фиксированных столбцов */
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) {
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+      }
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) {
+        width: 90px;
+        min-width: 90px;
+        max-width: 90px;
+        left: 40px;
+      }
+      
+      /* Улучшаем отображение выбора даты */
       #date-picker {
         font-size: 12px;
         padding: 6px;
       }
       
+      /* Улучшаем отображение статусных сообщений */
       .status-message {
-        font-size: 13px;
+        font-size: 12px;
         padding: 8px;
-      }
-      
-      /* Улучшение отображения для сенсорных устройств */
-      .toggle-btn {
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-        font-size: 16px;
-      }
-      
-      /* Увеличение области клика для ячеек на мобильных */
-      td, th {
-        min-height: 32px;
+        margin: 8px 0;
       }
     }
 
-    /* Для очень маленьких экранов */
-    @media (max-width: 480px) {
-      #date-picker {
-        font-size: 11px;
-      }
-      
-      .status-message {
-        font-size: 12px;
-      }
-      
+    /* Дополнительные стили для очень маленьких экранов */
+    @media only screen and (max-width: 350px) {
       td, th {
-        font-size: 12px;
-        height: 28px;
+        font-size: 10px;
+        height: 25px;
+      }
+      
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) {
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
+      }
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) {
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+        left: 35px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-    
-    <div class="table-wrapper">
-      <table id="main-table">
-        <thead>
-          <tr id="letter-row">
-            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-            </th>
-            <th>
-              <input type="date" id="date-picker" />
-            </th>
-          </tr>
-          <tr id="time-row">
-            <th>LANE</th>
-            <th id="overall-total">0ч 0м</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
+  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+  
+  <div class="table-wrapper">
+    <table id="main-table">
+      <thead>
+        <tr id="letter-row">
+          <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+            <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
+          </th>
+          <th>
+            <input type="date" id="date-picker" />
+          </th>
+        </tr>
+        <tr id="time-row">
+          <th>LANE</th>
+          <th id="overall-total">0ч 0м</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
   </div>
 
   <script>
@@ -539,7 +566,7 @@
         }
         
         // Ждем завершения всех запросов
-        await Promise.allSettled(promimes);
+        await Promise.allSettled(promises);
         
         overallTotal.textContent = formatMinutes(sumAll);
         
@@ -563,18 +590,6 @@
       buildBody();
       
       datePicker.addEventListener('change', loadData);
-      
-      // Оптимизация для сенсорных устройств
-      let touchStartX = 0;
-      document.addEventListener('touchstart', function(e) {
-        touchStartX = e.touches[0].clientX;
-      }, {passive: true});
-      
-      document.addEventListener('touchmove', function(e) {
-        if (Math.abs(e.touches[0].clientX - touchStartX) > 10 && e.touches[0].target.tagName === 'TD') {
-          e.preventDefault();
-        }
-      }, {passive: false});
       
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
@@ -609,13 +624,6 @@
       
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
-      });
-      
-      // Улучшение для мобильных: увеличение области клика для переключения групп
-      document.querySelectorAll('.toggle-btn').forEach(btn => {
-        btn.style.width = '20px';
-        btn.style.height = '20px';
-        btn.style.lineHeight = '20px';
       });
       
       // Автоматическая загрузка данных при инициализации
