@@ -196,10 +196,58 @@
       background-color: #f8f9fa;
       font-size: 14px;
     }
+
+    .error {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+    }
+
+    .config-panel {
+      margin: 15px 0;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .config-panel input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .test-btn {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .test-btn:hover {
+      background: #1a2f40;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
   </style>
 </head>
 <body>
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+  <div class="config-panel">
+    <h3>Настройка подключения</h3>
+    <p>URL Google Apps Script: 
+      <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/AKfycbwy2xtltFOABwrh1daKbTr06n-4xF-21DPQS0cfHqSO_2KmVCGI6zsD3tJ2k11DiVz9Gw/exec" />
+      <button class="test-btn" onclick="testConnection()">Проверить подключение</button>
+    </p>
+    <div id="connection-status"></div>
+  </div>
+
+  <div id="status" class="status-message">Укажите URL скрипта и выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
     <table id="main-table">
@@ -223,7 +271,7 @@
 
   <script>
     // Конфигурация
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwBoASDoUQJOhyttE8koinCBYuuDg0usJiKmTA8yHik_cjMezlfhXAYfc5jiMG_6OaQDg/exec'; // Замените на ваш URL Apps Script
+    let SCRIPT_URL = localStorage.getItem('script_url') || '';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
     
     // Элементы DOM
@@ -232,11 +280,26 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status');
-    
+          statusEl = document.getElementById('status'),
+          scriptUrlInput = document.getElementById('script-url'),
+          connectionStatus = document.getElementById('connection-status');
+
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
+
+    // Установка сохраненного URL
+    if (SCRIPT_URL) {
+      scriptUrlInput.value = SCRIPT_URL;
+    }
+
+    // Сохранение URL при изменении
+    scriptUrlInput.addEventListener('change', function() {
+      SCRIPT_URL = this.value.trim();
+      localStorage.setItem('script_url', SCRIPT_URL);
+      statusEl.textContent = 'URL сохранен. Выберите дату для загрузки данных.';
+      statusEl.classList.remove('error');
+    });
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -375,12 +438,43 @@
     // Установка статуса загрузки
     function setStatus(message, isError = false) {
       statusEl.textContent = message;
-      statusEl.style.backgroundColor = isError ? '#ffebee' : '#f8f9fa';
-      statusEl.style.color = isError ? '#c62828' : '#333';
+      if (isError) {
+        statusEl.classList.add('error');
+      } else {
+        statusEl.classList.remove('error');
+      }
+    }
+
+    // Тестирование подключения
+    async function testConnection() {
+      if (!SCRIPT_URL) {
+        connectionStatus.innerHTML = '<span style="color: #c62828;">Введите URL скрипта</span>';
+        return;
+      }
+
+      connectionStatus.innerHTML = '<div class="loading"></div> Проверка подключения...';
+      
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=test`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          connectionStatus.innerHTML = `<span class="success">✓ Подключение успешно (${data.status})</span>`;
+        } else {
+          connectionStatus.innerHTML = `<span style="color: #c62828;">✗ Ошибка: ${response.status} ${response.statusText}</span>`;
+        }
+      } catch (error) {
+        connectionStatus.innerHTML = `<span style="color: #c62828;">✗ Ошибка подключения: ${error.message}</span>`;
+      }
     }
 
     // Загрузка данных с бэкенда
     async function loadData() {
+      if (!SCRIPT_URL) {
+        setStatus('Сначала укажите URL Google Apps Script', true);
+        return;
+      }
+
       if (!datePicker.value || isLoading) return;
       
       isLoading = true;
@@ -396,13 +490,20 @@
           const row = allDataCells[idx];
           
           try {
-            const response = await fetch(`${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}`);
+            // Добавляем timestamp для избежания кеширования
+            const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
+            const response = await fetch(url);
             
             if (!response.ok) {
               throw new Error(`Ошибка HTTP: ${response.status}`);
             }
             
             const data = await response.json();
+            
+            // Проверяем наличие ошибки в ответе
+            if (data.error) {
+              throw new Error(data.error);
+            }
             
             let sum = 0;
             row.cells.forEach((cell, i) => {
