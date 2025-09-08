@@ -2,14 +2,22 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 20px;
+      padding: 10px;
       color: #333;
+      overflow-x: auto;
+      min-width: 1000px; /* Минимальная ширина для сохранения структуры */
+    }
+
+    .container {
+      max-width: 100%;
+      overflow: visible;
     }
 
     .table-wrapper {
@@ -17,8 +25,12 @@
       overflow-y: visible;
       position: relative;
       -webkit-overflow-scrolling: touch;
-      max-width: 100%;
+      width: 100%;
       margin: 0 auto;
+      border: 1px solid #d7dce3;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     table {
@@ -26,8 +38,6 @@
       width: 100%;
       table-layout: fixed;
       background-color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
       min-width: 800px;
     }
 
@@ -194,6 +204,9 @@
       border-radius: 5px;
       background-color: #f8f9fa;
       font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .error {
@@ -205,145 +218,80 @@
       color: #2e7d32;
     }
 
-    /* Мобильная адаптация */
-    .mobile-controls {
-      display: none;
-      margin-bottom: 10px;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .mobile-controls button {
-      padding: 8px 12px;
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    /* Медиазапросы для мобильных устройств */
+    /* Мобильная оптимизация */
     @media (max-width: 768px) {
       body {
-        padding: 10px;
+        padding: 5px;
       }
-
-      .mobile-controls {
-        display: flex;
-        justify-content: center;
+      
+      .table-wrapper {
+        border-radius: 8px;
       }
-
+      
       #date-picker {
-        font-size: 16px; /* Увеличиваем для удобства на мобильных */
-        padding: 12px;
+        font-size: 12px;
+        padding: 6px;
       }
-
+      
       .status-message {
-        font-size: 14px;
+        font-size: 13px;
         padding: 8px;
-        margin: 8px 0;
       }
-
-      /* Уменьшаем размер ячеек для мобильных */
+      
+      /* Улучшение отображения для сенсорных устройств */
+      .toggle-btn {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+      }
+      
+      /* Увеличение области клика для ячеек на мобильных */
       td, th {
-        width: 25px;
-        height: 25px;
+        min-height: 32px;
+      }
+    }
+
+    /* Для очень маленьких экранов */
+    @media (max-width: 480px) {
+      #date-picker {
         font-size: 11px;
       }
-
-      #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-      }
-
-      #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        left: 40px;
-        width: 90px;
-        min-width: 90px;
-        max-width: 90px;
-      }
-
-      /* Улучшаем отображение временных меток */
-      #time-row th .hour,
-      #time-row th .minute {
-        font-size: 9px;
-      }
-
-      /* Улучшаем видимость иконок в ячейках */
-      td {
-        font-size: 10px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      /* Дополнительные стили для очень маленьких экранов */
-      td, th {
-        width: 22px;
-        height: 22px;
-        font-size: 10px;
-      }
-
-      #time-row th {
-        padding: 2px 1px;
-      }
-
-      #time-row th .hour,
-      #time-row th .minute {
-        font-size: 8px;
-      }
-
-      .toggle-btn {
-        width: 8px;
-        height: 22px;
+      
+      .status-message {
         font-size: 12px;
-        line-height: 20px;
-        padding: 0 4px;
-      }
-    }
-
-    /* Улучшение для touch-устройств */
-    @media (hover: none) {
-      .toggle-btn {
-        min-width: 20px;
-        min-height: 20px;
       }
       
       td, th {
-        cursor: default;
+        font-size: 12px;
+        height: 28px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="mobile-controls">
-    <button id="expand-all">Развернуть все</button>
-    <button id="collapse-all">Свернуть все</button>
-  </div>
-  
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-  
-  <div class="table-wrapper">
-    <table id="main-table">
-      <thead>
-        <tr id="letter-row">
-          <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-            <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-          </th>
-          <th>
-            <input type="date" id="date-picker" />
-          </th>
-        </tr>
-        <tr id="time-row">
-          <th>LANE</th>
-          <th id="overall-total">0ч 0м</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
+  <div class="container">
+    <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+    
+    <div class="table-wrapper">
+      <table id="main-table">
+        <thead>
+          <tr id="letter-row">
+            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
+            </th>
+            <th>
+              <input type="date" id="date-picker" />
+            </th>
+          </tr>
+          <tr id="time-row">
+            <th>LANE</th>
+            <th id="overall-total">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -357,9 +305,7 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status'),
-          expandAllBtn = document.getElementById('expand-all'),
-          collapseAllBtn = document.getElementById('collapse-all');
+          statusEl = document.getElementById('status');
 
     // Данные
     const allGroups = [], allDataCells = [];
@@ -593,7 +539,7 @@
         }
         
         // Ждем завершения всех запросов
-        await Promise.allSettled(promises);
+        await Promise.allSettled(promimes);
         
         overallTotal.textContent = formatMinutes(sumAll);
         
@@ -618,9 +564,17 @@
       
       datePicker.addEventListener('change', loadData);
       
-      // Обработчики для кнопок мобильного управления
-      expandAllBtn.addEventListener('click', () => toggleAll(false));
-      collapseAllBtn.addEventListener('click', () => toggleAll(true));
+      // Оптимизация для сенсорных устройств
+      let touchStartX = 0;
+      document.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+      }, {passive: true});
+      
+      document.addEventListener('touchmove', function(e) {
+        if (Math.abs(e.touches[0].clientX - touchStartX) > 10 && e.touches[0].target.tagName === 'TD') {
+          e.preventDefault();
+        }
+      }, {passive: false});
       
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
@@ -655,6 +609,13 @@
       
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
+      });
+      
+      // Улучшение для мобильных: увеличение области клика для переключения групп
+      document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.style.width = '20px';
+        btn.style.height = '20px';
+        btn.style.lineHeight = '20px';
       });
       
       // Автоматическая загрузка данных при инициализации
