@@ -201,10 +201,53 @@
       background-color: #ffebee !important;
       color: #c62828 !important;
     }
+
+    .config-panel {
+      margin: 15px 0;
+      padding: 15px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .config-panel input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .test-btn {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .test-btn:hover {
+      background: #1a2f40;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
   </style>
 </head>
 <body>
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+  <div class="config-panel">
+    <h3>Настройка подключения</h3>
+    <p>URL Google Apps Script: 
+      <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec" />
+      <button class="test-btn" onclick="testConnection()">Проверить подключение</button>
+    </p>
+    <div id="connection-status"></div>
+  </div>
+
+  <div id="status" class="status-message">Укажите URL скрипта и выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
     <table id="main-table">
@@ -227,8 +270,8 @@
   </div>
 
   <script>
-    // Конфигурация - предустановленный URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec";
+    // Конфигурация
+    let SCRIPT_URL = localStorage.getItem('script_url') || '';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
     
     // Элементы DOM
@@ -237,12 +280,26 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status');
+          statusEl = document.getElementById('status'),
+          scriptUrlInput = document.getElementById('script-url'),
+          connectionStatus = document.getElementById('connection-status');
 
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
-    let currentRequestController = null;
+
+    // Установка сохраненного URL
+    if (SCRIPT_URL) {
+      scriptUrlInput.value = SCRIPT_URL;
+    }
+
+    // Сохранение URL при изменении
+    scriptUrlInput.addEventListener('change', function() {
+      SCRIPT_URL = this.value.trim();
+      localStorage.setItem('script_url', SCRIPT_URL);
+      statusEl.textContent = 'URL сохранен. Выберите дату для загрузки данных.';
+      statusEl.classList.remove('error');
+    });
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -367,12 +424,6 @@
 
     // Очистка данных таблицы
     function clearRows() {
-      // Отменяем текущий запрос, если он выполняется
-      if (currentRequestController) {
-        currentRequestController.abort();
-        currentRequestController = null;
-      }
-      
       overallTotal.textContent = '0ч 0м';
       allDataCells.forEach(r => {
         r.header.textContent = '';
@@ -394,84 +445,110 @@
       }
     }
 
+    // Тестирование подключения
+    async function testConnection() {
+      if (!SCRIPT_URL) {
+        connectionStatus.innerHTML = '<span style="color: #c62828;">Введите URL скрипта</span>';
+        return;
+      }
+
+      connectionStatus.innerHTML = '<div class="loading"></div> Проверка подключения...';
+      
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=test`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          connectionStatus.innerHTML = `<span class="success">✓ Подключение успешно (${data.status})</span>`;
+        } else {
+          connectionStatus.innerHTML = `<span style="color: #c62828;">✗ Ошибка: ${response.status} ${response.statusText}</span>`;
+        }
+      } catch (error) {
+        connectionStatus.innerHTML = `<span style="color: #c62828;">✗ Ошибка подключения: ${error.message}</span>`;
+      }
+    }
+
     // Загрузка данных с бэкенда
     async function loadData() {
-      if (!datePicker.value || isLoading) return;
-      
-      // Отменяем предыдущий запрос, если он выполняется
-      if (currentRequestController) {
-        currentRequestController.abort();
+      if (!SCRIPT_URL) {
+        setStatus('Сначала укажите URL Google Apps Script', true);
+        return;
       }
+
+      if (!datePicker.value || isLoading) return;
       
       isLoading = true;
       clearRows();
       setStatus('Загрузка данных...');
       
       const selectedDate = datePicker.value;
-      let sumAll = 0;
+      let done = 0, sumAll = 0;
       const errors = [];
       
       try {
-        // Создаем новый AbortController для текущего запроса
-        currentRequestController = new AbortController();
-        const signal = currentRequestController.signal;
-        
-        // Загружаем все данные одним запросом
-        const url = `${SCRIPT_URL}?action=getAllData&date=${selectedDate}&t=${Date.now()}`;
-        const response = await fetch(url, { signal });
-        
-        if (!response.ok) {
-          throw new Error(`Ошибка HTTP: ${response.status}`);
-        }
-        
-        const allData = await response.json();
-        
-        // Проверяем наличие ошибки в ответе
-        if (allData.error) {
-          throw new Error(allData.error);
-        }
-        
-        // Обрабатываем данные для всех дорожек
-        allData.forEach((data, idx) => {
-          if (idx >= allDataCells.length) return;
-          
+        for (let idx = 0; idx < allDataCells.length; idx++) {
           const row = allDataCells[idx];
-          let sum = 0;
           
-          row.cells.forEach((cell, i) => {
-            const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
-            cell.classList.remove('active-cell');
+          try {
+            // Добавляем timestamp для избежания кеширования
+            const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
+            const response = await fetch(url);
             
-            if (data.c && data.c.includes(time)) {
-              cell.classList.add('active-cell');
-              cell.textContent = '🎳';
-              sum++;
-            } else if (data.b && data.b.includes(time)) {
-              cell.textContent = '';
-              cell.style.color = 'black';
-            } else {
-              cell.textContent = '⚡︎';
-              cell.style.color = '#dc143c';
+            if (!response.ok) {
+              throw new Error(`Ошибка HTTP: ${response.status}`);
             }
-          });
-          
-          row.header.textContent = formatMinutes(sum);
-          sumAll += sum;
-        });
+            
+            const data = await response.json();
+            
+            // Проверяем наличие ошибки в ответе
+            if (data.error) {
+              throw new Error(data.error);
+            }
+            
+            let sum = 0;
+            row.cells.forEach((cell, i) => {
+              const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
+              cell.classList.remove('active-cell');
+              
+              if (data.c && data.c.includes(time)) {
+                cell.classList.add('active-cell');
+                cell.textContent = '🎳';
+                sum++;
+              } else if (data.b && data.b.includes(time)) {
+                cell.textContent = '';
+                cell.style.color = 'black';
+              } else {
+                cell.textContent = '⚡︎';
+                cell.style.color = '#dc143c';
+              }
+            });
+            
+            row.header.textContent = formatMinutes(sum);
+            sumAll += sum;
+            done++;
+            
+            setStatus(`Загружено ${done} из 16 дорожек...`);
+            
+          } catch (err) {
+            console.error(`Ошибка дорожки ${idx+1}:`, err);
+            errors.push(`Дорожка ${idx+1}: ${err.message}`);
+            done++;
+          }
+        }
         
         overallTotal.textContent = formatMinutes(sumAll);
-        setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
+        
+        if (errors.length > 0) {
+          setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
+        } else {
+          setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
+        }
         
       } catch (error) {
-        if (error.name === 'AbortError') {
-          setStatus('Запрос отменен', true);
-        } else {
-          console.error('Ошибка загрузки:', error);
-          setStatus(`Ошибка загрузки: ${error.message}`, true);
-        }
+        console.error('Общая ошибка:', error);
+        setStatus(`Ошибка загрузки: ${error.message}`, true);
       } finally {
         isLoading = false;
-        currentRequestController = null;
       }
     }
 
@@ -482,23 +559,14 @@
       
       datePicker.addEventListener('change', loadData);
       
-      // Оптимизированные обработчики событий для hover
-      const table = document.getElementById('main-table');
-      
-      table.addEventListener('mouseover', function(e) {
-        const target = e.target;
-        if (target.tagName === 'TD') {
-          const ci = target.cellIndex;
-          const row = target.parentElement;
+      document.addEventListener('mouseover', function(e) {
+        if (e.target.tagName === 'TD') {
+          const td = e.target, ci = td.cellIndex, row = td.parentElement;
+          row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
           
-          // Добавляем классы для строки
-          row.querySelectorAll('td').forEach(cell => {
-            cell.classList.add('hover-row');
-          });
-          
-          // Добавляем классы для столбца
-          document.querySelectorAll(`#main-table tbody tr td:nth-child(${ci+1})`).forEach(cell => {
-            cell.classList.add('hover-col');
+          document.querySelectorAll('#main-table tbody tr').forEach(r => {
+            const c = r.children[ci];
+            if (c) c.classList.add('hover-col');
           });
           
           const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
@@ -506,9 +574,8 @@
         }
       });
 
-      table.addEventListener('mouseout', function(e) {
-        const target = e.target;
-        if (target.tagName === 'TD') {
+      document.addEventListener('mouseout', function(e) {
+        if (e.target.tagName === 'TD') {
           document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
             el.classList.remove('hover-row', 'hover-col');
           });
@@ -526,9 +593,6 @@
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
       });
-      
-      // Автоматическая загрузка данных при инициализации
-      setTimeout(loadData, 500);
     }
 
     // Запуск инициализации при загрузке страницы
