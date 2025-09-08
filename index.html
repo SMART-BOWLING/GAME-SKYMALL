@@ -19,6 +19,7 @@
       margin-bottom: 10px;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     .mobile-controls button {
@@ -291,6 +292,16 @@
       #time-row th .minute {
         font-size: 10px;
       }
+      
+      /* ПО УМОЛЧАНИЮ ВСЕ СТОЛБЦЫ ВИДИМЫ НА МОБИЛЬНОМ */
+      .hidden-column {
+        display: table-cell !important;
+      }
+      
+      /* Кнопки переключения групп */
+      .toggle-btn {
+        background-color: #dc143c;
+      }
     }
 
     /* Дополнительные стили для очень маленьких экранов */
@@ -327,7 +338,7 @@
 <body>
   <div class="mobile-controls" id="mobileControls">
     <button onclick="scrollToColumn(0)">В начало</button>
-    <button onclick="toggleAllMobile()">Свернуть/развернуть все</button>
+    <button onclick="toggleAllMobile()">Свернуть все</button>
     <button onclick="scrollToCurrentTime()">Текущее время</button>
   </div>
   
@@ -372,6 +383,7 @@
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map(); // Для управления запросами
+    let isMobileView = false;
 
     // Функции для мобильного управления
     function scrollToColumn(minute) {
@@ -388,7 +400,18 @@
     }
 
     function toggleAllMobile() {
-      toggleAll();
+      const allHidden = areAllHidden();
+      toggleAll(!allHidden);
+      
+      // Обновляем текст кнопки
+      const button = document.querySelector('.mobile-controls button:nth-child(2)');
+      button.textContent = allHidden ? 'Свернуть все' : 'Развернуть все';
+    }
+
+    // Проверяем, мобильное ли устройство
+    function checkMobile() {
+      isMobileView = window.innerWidth <= 768;
+      return isMobileView;
     }
 
     // Форматирование минут в читаемый вид
@@ -441,7 +464,7 @@
       const btn = document.createElement('div');
       btn.className = 'toggle-btn';
       btn.title = title;
-      btn.textContent = '+';
+      btn.textContent = isMobileView ? '–' : '+'; // На мобильном по умолчанию развернуто
       let last = 0;
       btn.onclick = () => {
         const now = Date.now();
@@ -638,8 +661,20 @@
 
     // Инициализация при загрузке страницы
     function init() {
+      // Проверяем, мобильное ли устройство
+      checkMobile();
+      
       buildHeaders();
       buildBody();
+      
+      // На мобильных устройствах сразу разворачиваем все столбцы
+      if (isMobileView) {
+        // Не сворачиваем столбцы на мобильных
+        document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = '–');
+      } else {
+        // На ПК сворачиваем все группы
+        setTimeout(() => toggleAll(true), 100);
+      }
       
       datePicker.addEventListener('change', loadData);
       
@@ -671,11 +706,13 @@
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
       
-      // Сворачиваем все группы при загрузке
-      setTimeout(() => toggleAll(true), 100);
-      
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
+      });
+      
+      // Обработчик изменения размера окна
+      window.addEventListener('resize', function() {
+        checkMobile();
       });
       
       // Автоматическая загрузка данных при инициализации
