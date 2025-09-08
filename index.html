@@ -292,16 +292,6 @@
       #time-row th .minute {
         font-size: 10px;
       }
-      
-      /* ПО УМОЛЧАНИЮ ВСЕ СТОЛБЦЫ ВИДИМЫ НА МОБИЛЬНОМ */
-      .hidden-column {
-        display: table-cell !important;
-      }
-      
-      /* Кнопки переключения групп */
-      .toggle-btn {
-        background-color: #dc143c;
-      }
     }
 
     /* Дополнительные стили для очень маленьких экранов */
@@ -338,7 +328,8 @@
 <body>
   <div class="mobile-controls" id="mobileControls">
     <button onclick="scrollToColumn(0)">В начало</button>
-    <button onclick="toggleAllMobile()">Свернуть все</button>
+    <button onclick="showFirstGroups()">Показать первые 4 часа</button>
+    <button onclick="toggleAllMobile()">Развернуть всё</button>
     <button onclick="scrollToCurrentTime()">Текущее время</button>
   </div>
   
@@ -399,13 +390,49 @@
       scrollToColumn(minutes);
     }
 
+    // Показать только первые 4 часа (первые 16 групп)
+    function showFirstGroups() {
+      allGroups.forEach((group, index) => {
+        const isFirst4Hours = index < 16; // 4 часа * 4 группы в час = 16 групп
+        group.forEach(colIndex => {
+          [timeRow, letterRow].forEach(row => {
+            if (row.children[colIndex+2]) {
+              if (isFirst4Hours) {
+                row.children[colIndex+2].classList.remove('hidden-column');
+              } else {
+                row.children[colIndex+2].classList.add('hidden-column');
+              }
+            }
+          });
+          
+          tableBody.querySelectorAll('tr').forEach(tr => {
+            if (tr.children[colIndex+2]) {
+              if (isFirst4Hours) {
+                tr.children[colIndex+2].classList.remove('hidden-column');
+              } else {
+                tr.children[colIndex+2].classList.add('hidden-column');
+              }
+            }
+          });
+        });
+        
+        // Обновляем кнопки переключения
+        if (timeRow.children[group[0]+2]) {
+          const btn = timeRow.children[group[0]+2].querySelector('.toggle-btn');
+          if (btn) {
+            btn.textContent = isFirst4Hours ? '–' : '+';
+          }
+        }
+      });
+    }
+
     function toggleAllMobile() {
       const allHidden = areAllHidden();
       toggleAll(!allHidden);
       
       // Обновляем текст кнопки
-      const button = document.querySelector('.mobile-controls button:nth-child(2)');
-      button.textContent = allHidden ? 'Свернуть все' : 'Развернуть все';
+      const button = document.querySelector('.mobile-controls button:nth-child(3)');
+      button.textContent = allHidden ? 'Свернуть всё' : 'Развернуть всё';
     }
 
     // Проверяем, мобильное ли устройство
@@ -464,7 +491,11 @@
       const btn = document.createElement('div');
       btn.className = 'toggle-btn';
       btn.title = title;
-      btn.textContent = isMobileView ? '–' : '+'; // На мобильном по умолчанию развернуто
+      
+      // На мобильном показываем только первые 4 часа, остальное скрываем
+      const isFirst4Hours = idxs[0] <= 4 * 60; // Первые 4 часа (240 минут)
+      btn.textContent = isMobileView && !isFirst4Hours ? '+' : '–';
+      
       let last = 0;
       btn.onclick = () => {
         const now = Date.now();
@@ -533,6 +564,18 @@
       }
       
       tableBody.appendChild(frag);
+    }
+
+    // На мобильных устройствах скрываем все столбцы кроме первых 4 часов
+    function setupMobileView() {
+      if (!isMobileView) return;
+      
+      allGroups.forEach((group, index) => {
+        const isFirst4Hours = index < 16; // 4 часа * 4 группы в час = 16 групп
+        if (!isFirst4Hours) {
+          toggleGroup(group); // Скрываем группы после первых 4 часов
+        }
+      });
     }
 
     // Очистка данных таблицы
@@ -667,10 +710,9 @@
       buildHeaders();
       buildBody();
       
-      // На мобильных устройствах сразу разворачиваем все столбцы
+      // На мобильных устройствах настраиваем отображение
       if (isMobileView) {
-        // Не сворачиваем столбцы на мобильных
-        document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = '–');
+        setupMobileView();
       } else {
         // На ПК сворачиваем все группы
         setTimeout(() => toggleAll(true), 100);
@@ -712,7 +754,18 @@
       
       // Обработчик изменения размера окна
       window.addEventListener('resize', function() {
+        const wasMobile = isMobileView;
         checkMobile();
+        
+        // Если переключились между мобильным и десктопным видом
+        if (wasMobile !== isMobileView) {
+          if (isMobileView) {
+            setupMobileView();
+          } else {
+            // На десктопе возвращаем все группы в свернутое состояние
+            setTimeout(() => toggleAll(true), 100);
+          }
+        }
       });
       
       // Автоматическая загрузка данных при инициализации
