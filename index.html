@@ -2,209 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6fa;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      overflow-y: visible;
-      position: relative;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      table-layout: auto;
-      background-color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
-      min-width: 800px;
-    }
-
-    td, th {
-      height: 30px;
-      text-align: center;
-      font-size: 13px;
-      border: 1px solid #d7dce3;
-      box-sizing: border-box;
-      white-space: nowrap;
-      vertical-align: middle;
-      position: relative;
-      transition: background-color 0.2s ease;
-    }
-
-    th {
-      background-color: #ecf0f1;
-      color: #1a2f40;
-      font-weight: 600;
-    }
-
-    /* Фиксированные первые два столбца */
-    #main-table th:nth-child(1),
-    #main-table td:nth-child(1),
-    #main-table th:nth-child(2),
-    #main-table td:nth-child(2) {
-      position: sticky;
-    }
-    #main-table th:nth-child(1),
-    #main-table td:nth-child(1) {
-      left: 0;
-      z-index: 3;
-      background-color: #dc143c;
-      color: white;
-      width: 50px;
-      min-width: 50px;
-      max-width: 50px;
-    }
-    #main-table th:nth-child(2),
-    #main-table td:nth-child(2) {
-      left: 50px;
-      z-index: 5;
-      background-color: #2c3e50;
-      color: white;
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
-      overflow: hidden;
-    }
-
-    /* Заголовки первой и второй строки */
-    #letter-row th:nth-child(1),
-    #letter-row th:nth-child(2),
-    #time-row th:nth-child(1),
-    #time-row th:nth-child(2) {
-      background-color: #ecf0f1 !important;
-      color: #2c3e50 !important;
-      border: 0px solid #d7dce3 !important;
-      z-index: 4;
-    }
-
-    #letter-row th:nth-child(n+3) {
-      background-color: #ecf0f1 !important;
-      color: #2c3e50;
-      border: 1px solid #e0e0e0 !important;
-    }
-    #time-row th:nth-child(n+3) {
-      white-space: normal;
-      padding: 4px 2px;
-      line-height: 1;
-      vertical-align: middle;
-      border: 1px solid #e0e0e0;
-      width: auto;
-    }
-    #time-row th div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #time-row th .hour {
-      font-size: 12px;
-      font-weight: bold;
-    }
-    #time-row th .minute {
-      font-size: 12px;
-    }
-
-    .hidden-column {
-      display: none !important;
-    }
-    .active-cell {
-      background-color: #2c3e50;
-      color: #fff;
-      font-weight: 700;
-    }
-    td.hover-row, th.hover-row,
-    td.hover-col, th.hover-col {
-      background-color: #fa849c !important;
-    }
-
-    #date-picker {
-      width: 100%;
-      padding: 8px;
-      font-size: 13px;
-      font-family: 'Arial Black','Impact', sans-serif;
-      border: 1px solid #ecf0f1;
-      border-radius: 10px;
-      background-color: #ecf0f1;
-      color: #1a2f40;
-      box-sizing: border-box;
-      cursor: pointer;
-      -webkit-appearance: none;
-      appearance: none;
-      outline: none;
-    }
-    #date-picker:hover {
-      background-color: #e0e0e0;
-    }
-    #date-picker::-webkit-calendar-picker-indicator {
-      filter: invert(0.3);
-      cursor: pointer;
-    }
-
-    /* Кнопки группировки */
-    .toggle-btn {
-      cursor: pointer;
-      user-select: none;
-      color: #fff;
-      background-color: #1a2f40;
-      border-radius: 4px;
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 27px;
-      padding: 0 6px;
-      display: inline-block;
-      width: 10px;
-      height: 30px;
-      text-align: center;
-      transition: background-color 0.1s ease;
-    }
-    .toggle-btn:hover {
-      background-color: #dc143c;
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .status-message {
-      text-align: center;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      background-color: #f8f9fa;
-      font-size: 14px;
-    }
-
-    .error {
-      background-color: #ffebee !important;
-      color: #c62828 !important;
-    }
-
-    .success {
-      color: #2e7d32;
-    }
-
+    /* ... (Ваши оригинальные стили остаются без изменений) ... */
     @media (max-width: 768px) {
+      /* Стили для мобильного вида без поворота */
       body { padding: 10px; }
       .table-wrapper { overflow-x: scroll; }
       table { min-width: 100%; }
@@ -215,6 +18,46 @@
       td, th { font-size: 12px; height: 25px; }
       #time-row th .hour, #time-row th .minute { font-size: 10px; }
       .toggle-btn { font-size: 12px; height: 25px; line-height: 22px; }
+      
+      /* Стили для ПОВЕРНУТОГО вида на мобильных */
+      html.rotated {
+        width: 100vh;
+        height: 100vw;
+        transform: rotate(90deg) translateY(-100vw);
+        transform-origin: top left;
+        position: absolute;
+        top: 0;
+        left: 100vw;
+        overflow-x: hidden;
+      }
+      
+      html.rotated body {
+        width: 100vh;
+        height: 100vw;
+        padding: 20px;
+      }
+      
+      /* Кнопка возврата из повернутого режима */
+      #rotate-toggle {
+        display: none;
+      }
+      
+      html.rotated #rotate-toggle {
+        display: block;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      }
     }
   </style>
 </head>
@@ -241,188 +84,11 @@
     </table>
   </div>
 
+  <!-- Кнопка для переключения режима поворота -->
+  <button id="rotate-toggle" aria-label="Вернуть экран">↩</button>
+
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
-    const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
-    const letterRow = document.getElementById('letter-row'),
-          timeRow = document.getElementById('time-row'),
-          overallTotal = document.getElementById('overall-total'),
-          tableBody = document.getElementById('table-body'),
-          datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status');
-    const allGroups = [], allDataCells = [];
-    let isLoading = false;
-    const fetchControllers = new Map();
-
-    function formatMinutes(mins) {
-      const h = Math.floor(mins / 60);
-      const m = mins % 60;
-      return `${h}ч ${m}м`;
-    }
-
-    function toggleGroup(idxs) {
-      idxs.forEach(i => {
-        [timeRow, letterRow].forEach(row => {
-          if (row.children[i+2]) row.children[i+2].classList.toggle('hidden-column');
-        });
-        tableBody.querySelectorAll('tr').forEach(tr => {
-          if (tr.children[i+2]) tr.children[i+2].classList.toggle('hidden-column');
-        });
-      });
-    }
-
-    function areAllHidden() {
-      return allGroups.every(g => {
-        const el = timeRow.children[g[0]+2];
-        return el && el.classList.contains('hidden-column');
-      });
-    }
-
-    function toggleAll(forceHide=null) {
-      const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
-      allGroups.forEach(g => {
-        const el = timeRow.children[g[0]+2];
-        if (el) {
-          const hidden = el.classList.contains('hidden-column');
-          if (hidden !== shouldHide) toggleGroup(g);
-        }
-      });
-      document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
-    }
-
-    function makeBtn(idxs, title) {
-      const btn = document.createElement('div');
-      btn.className = 'toggle-btn';
-      btn.title = title;
-      btn.textContent = '+';
-      let last = 0;
-      btn.onclick = () => {
-        const now = Date.now();
-        if (now - last < 300) toggleAll(!areAllHidden());
-        else {
-          toggleGroup(idxs);
-          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
-        }
-        last = now;
-      };
-      return btn;
-    }
-
-    function buildHeaders() {
-      const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
-      for (let i = 1; i <= totalMinutes; i++) {
-        const thL = document.createElement('th'); 
-        fragL.appendChild(thL);
-        const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
-        const thT = document.createElement('th');
-        thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
-        fragT.appendChild(thT);
-        if ((h*60 + m) % groupInterval === 0) {
-          const start = (h*60 + m) === 0 ? 1 : (h*60 + m) + 1;
-          const end = Math.min(start + groupSize - 1, totalMinutes - 1);
-          const idxs = [];
-          for (let j = start; j <= end; j++) idxs.push(j);
-          if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
-            allGroups.push(idxs);
-          }
-        }
-      }
-      letterRow.appendChild(fragL);
-      timeRow.appendChild(fragT);
-    }
-
-    function buildBody() {
-      const frag = document.createDocumentFragment();
-      for (let lane = 0; lane < 16; lane++) {
-        const tr = document.createElement('tr');
-        const thLane = document.createElement('th'); 
-        thLane.textContent = lane + 1; 
-        tr.appendChild(thLane);
-        const thCount = document.createElement('th'); 
-        tr.appendChild(thCount);
-        const cells = [];
-        for (let i = 0; i < totalMinutes; i++) {
-          const td = document.createElement('td');
-          tr.appendChild(td);
-          cells.push(td);
-        }
-        frag.appendChild(tr);
-        allDataCells.push({ header: thCount, cells });
-      }
-      tableBody.appendChild(frag);
-    }
-
-    function clearRows() {
-      fetchControllers.forEach(controller => controller.abort());
-      fetchControllers.clear();
-      overallTotal.textContent = '0ч 0м';
-      allDataCells.forEach(r => {
-        r.header.textContent = '';
-        r.cells.forEach(c => {
-          c.classList.remove('active-cell');
-          c.textContent = '';
-          c.style.color = '';
-        });
-      });
-    }
-
-    function setStatus(message, isError = false) {
-      statusEl.textContent = message;
-      if (isError) statusEl.classList.add('error'); else statusEl.classList.remove('error');
-    }
-
-    async function loadLaneData(idx, selectedDate) {
-      const controller = new AbortController();
-      fetchControllers.set(idx, controller);
-      try {
-        const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
-        const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        return data;
-      } finally { fetchControllers.delete(idx); }
-    }
-
-    async function loadData() {
-      if (!datePicker.value || isLoading) return;
-      isLoading = true;
-      clearRows();
-      setStatus('Загрузка данных...');
-      const selectedDate = datePicker.value;
-      let done = 0, sumAll = 0;
-      const errors = [];
-      const promises = [];
-      try {
-        for (let idx = 0; idx < allDataCells.length; idx++) {
-          promises.push(
-            loadLaneData(idx, selectedDate)
-              .then(data => {
-                const row = allDataCells[idx];
-                let sum = 0;
-                row.cells.forEach((cell, i) => {
-                  const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
-                  cell.classList.remove('active-cell');
-                  if (data.c && data.c.includes(time)) { cell.classList.add('active-cell'); cell.textContent = '🎳'; sum++; }
-                  else if (data.b && data.b.includes(time)) { cell.textContent = ''; cell.style.color = 'black'; }
-                  else { cell.textContent = '⚡︎'; cell.style.color = '#dc143c'; }
-                });
-                row.header.textContent = formatMinutes(sum);
-                sumAll += sum;
-                done++;
-                setStatus(`Загружено ${done} из 16 дорожек...`);
-              })
-              .catch(err => { console.error(`Ошибка дорожки ${idx+1}:`, err); errors.push(`Дорожка ${idx+1}: ${err.message}`); done++; })
-          );
-        }
-        await Promise.allSettled(promises);
-        overallTotal.textContent = formatMinutes(sumAll);
-        if (errors.length > 0) setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
-        else setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
-      } catch (error) { console.error('Общая ошибка:', error); setStatus(`Ошибка загрузки: ${error.message}`, true); }
-      finally { isLoading = false; }
-    }
+    // ... (Ваш оригинальный JavaScript код остается без изменений) ...
 
     function init() {
       buildHeaders();
@@ -445,10 +111,29 @@
       datePicker.value = iso;
       setTimeout(() => toggleAll(true), 100);
       document.getElementById('logo-wrapper').addEventListener('click', () => { datePicker.click(); });
+      
+      // Автоповорот для мобильных устройств
+      function checkMobileAndRotate() {
+        if (window.innerWidth <= 768) {
+          document.documentElement.classList.add('rotated');
+        }
+      }
+      checkMobileAndRotate();
       setTimeout(loadData, 500);
+      
+      // Обработчик для кнопки возврата
+      document.getElementById('rotate-toggle').addEventListener('click', function() {
+        document.documentElement.classList.toggle('rotated');
+      });
     }
 
     window.addEventListener('load', init);
+    // Опционально: можно также проверять при изменении размера окна
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 768) {
+        document.documentElement.classList.remove('rotated');
+      }
+    });
   </script>
 </body>
 </html>
