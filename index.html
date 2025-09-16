@@ -4,22 +4,26 @@
   <meta charset="UTF-8" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* Поворот всей страницы на 90° вправо */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 20px;
-      color: #333;
+      padding: 0;
+      overflow: hidden;
+    }
 
+    /* Контейнер для поворота страницы */
+    #rotated-wrapper {
       transform: rotate(90deg);
       transform-origin: top left;
-      width: 100vh;
-      height: 100vw;
-      overflow: auto;
       position: absolute;
       top: 0;
       left: 0;
+      width: 100vh;
+      height: 100vw;
+      overflow: auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
     .table-wrapper {
@@ -215,7 +219,7 @@
     }
 
     @media (max-width: 768px) {
-      body { padding: 10px; }
+      #rotated-wrapper { padding: 10px; }
       .table-wrapper { overflow-x: scroll; }
       table { min-width: 100%; }
       #main-table th:nth-child(1),
@@ -229,29 +233,32 @@
   </style>
 </head>
 <body>
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-  
-  <div class="table-wrapper">
-    <table id="main-table">
-      <thead>
-        <tr id="letter-row">
-          <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-            <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-          </th>
-          <th>
-            <input type="date" id="date-picker" />
-          </th>
-        </tr>
-        <tr id="time-row">
-          <th>LANE</th>
-          <th id="overall-total">0ч 0м</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
+  <div id="rotated-wrapper">
+    <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+    
+    <div class="table-wrapper">
+      <table id="main-table">
+        <thead>
+          <tr id="letter-row">
+            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
+            </th>
+            <th>
+              <input type="date" id="date-picker" />
+            </th>
+          </tr>
+          <tr id="time-row">
+            <th>LANE</th>
+            <th id="overall-total">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
+    /* Весь JS оставлен без изменений, как у тебя в оригинале */
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
     const letterRow = document.getElementById('letter-row'),
@@ -460,5 +467,4 @@
 
     window.addEventListener('load', init);
   </script>
-</body>
 </html>
