@@ -2,14 +2,28 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Данные по дате – 16 таблиц</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
       padding: 0;
       color: #333;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+    }
+    
+    .rotated-container {
       transform: rotate(90deg);
       transform-origin: center center;
       width: 100vh;
@@ -19,14 +33,23 @@
       left: 50%;
       margin-top: -50vw;
       margin-left: -50vh;
-      overflow: hidden;
+      overflow: auto;
+      padding: 15px;
+    }
+    
+    .mobile-optimized-table {
+      transform: scale(0.85);
+      transform-origin: top center;
+      padding-bottom: 20px;
     }
 
-    .container {
-      width: 90vh;
-      height: 60vw;
-      padding: 20px;
-      box-sizing: border-box;
+    .status-message {
+      text-align: center;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      font-size: 14px;
     }
 
     .table-wrapper {
@@ -36,6 +59,10 @@
       -webkit-overflow-scrolling: touch;
       max-width: 100%;
       margin: 0 auto;
+      border: 1px solid #d7dce3;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     table {
@@ -43,21 +70,19 @@
       width: 100%;
       table-layout: auto;
       background-color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
       min-width: 800px;
     }
 
     td, th {
-      height: 30px;
+      height: 28px;
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       border: 1px solid #d7dce3;
-      box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
+      padding: 2px;
     }
 
     th {
@@ -79,19 +104,19 @@
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 50px;
-      min-width: 50px;
-      max-width: 50px;
+      width: 40px;
+      min-width: 40px;
+      max-width: 40px;
     }
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 50px;
+      left: 40px;
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
+      width: 90px;
+      min-width: 90px;
+      max-width: 90px;
       overflow: hidden;
     }
 
@@ -114,7 +139,7 @@
     }
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 4px 2px;
+      padding: 2px 1px;
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
@@ -126,11 +151,11 @@
       align-items: center;
     }
     #time-row th .hour {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: bold;
     }
     #time-row th .minute {
-      font-size: 12px;
+      font-size: 10px;
     }
 
     .hidden-column {
@@ -149,14 +174,13 @@
     /* Date-picker */
     #date-picker {
       width: 100%;
-      padding: 8px;
-      font-size: 13px;
+      padding: 6px;
+      font-size: 12px;
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #ecf0f1;
       color: #1a2f40;
-      box-sizing: border-box;
       cursor: pointer;
       -webkit-appearance: none;
       appearance: none;
@@ -175,42 +199,19 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 4px;
+      border-radius: 3px;
       font-weight: bold;
-      font-size: 14px;
-      line-height: 27px;
-      padding: 0 6px;
+      font-size: 12px;
+      line-height: 20px;
+      padding: 0 4px;
       display: inline-block;
-      width: 10px;
-      height: 30px;
+      width: 8px;
+      height: 20px;
       text-align: center;
       transition: background-color 0.1s ease;
     }
     .toggle-btn:hover {
       background-color: #dc143c;
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .status-message {
-      text-align: center;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      background-color: #f8f9fa;
-      font-size: 14px;
     }
 
     .error {
@@ -221,76 +222,91 @@
     .success {
       color: #2e7d32;
     }
-
-    /* Медиа-запрос для мобильных устройств */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
+    
+    .instructions {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* Медиа-запрос для очень маленьких экранов */
+    @media (max-height: 500px) {
+      .mobile-optimized-table {
+        transform: scale(0.75);
       }
       
-      .table-wrapper {
-        overflow-x: scroll;
-      }
-      
-      table {
-        min-width: 100%;
+      td, th {
+        height: 24px;
+        font-size: 11px;
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) {
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
-        left: 40px;
-        width: 100px;
-        min-width: 100px;
-        max-width: 100px;
+        left: 35px;
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+      }
+    }
+    
+    /* Медиа-запрос для горизонтальной ориентации */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .rotated-container {
+        transform: none;
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        top: 0;
+        left: 0;
+        padding: 10px;
       }
       
-      td, th {
-        font-size: 12px;
-        height: 25px;
+      .mobile-optimized-table {
+        transform: none;
       }
       
-      #time-row th .hour,
-      #time-row th .minute {
-        font-size: 10px;
-      }
-      
-      .toggle-btn {
-        font-size: 12px;
-        height: 25px;
-        line-height: 22px;
+      .instructions {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-    
-    <div class="table-wrapper">
-      <table id="main-table">
-        <thead>
-          <tr id="letter-row">
-            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-            </th>
-            <th>
-              <input type="date" id="date-picker" />
-            </th>
-          </tr>
-          <tr id="time-row">
-            <th>LANE</th>
-            <th id="overall-total">0ч 0м</th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
+  <div class="rotated-container">
+    <div class="mobile-optimized-table">
+      <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+      
+      <div class="instructions">
+        Используйте два пальца для прокрутки таблицы влево/вправо
+      </div>
+      
+      <div class="table-wrapper">
+        <table id="main-table">
+          <thead>
+            <tr id="letter-row">
+              <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+                <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:35px;height:35px;" />
+              </th>
+              <th>
+                <input type="date" id="date-picker" />
+              </th>
+            </tr>
+            <tr id="time-row">
+              <th>LANE</th>
+              <th id="overall-total">0ч 0м</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -310,7 +326,7 @@
     // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
-    const fetchControllers = new Map(); // Для управления запросами
+    const fetchControllers = new Map();
 
     // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
@@ -435,7 +451,6 @@
 
     // Очистка данных таблицы
     function clearRows() {
-      // Отменяем все текущие запросы
       fetchControllers.forEach(controller => controller.abort());
       fetchControllers.clear();
       
@@ -499,7 +514,6 @@
       const promises = [];
       
       try {
-        // Создаем промисы для всех дорожек
         for (let idx = 0; idx < allDataCells.length; idx++) {
           promises.push(
             loadLaneData(idx, selectedDate)
@@ -538,7 +552,6 @@
           );
         }
         
-        // Ждем завершения всех запросов
         await Promise.allSettled(promises);
         
         overallTotal.textContent = formatMinutes(sumAll);
@@ -575,7 +588,7 @@
           });
           
           const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
-            if (th) th.classList.add('hover-col');
+          if (th) th.classList.add('hover-col');
         }
       });
 
