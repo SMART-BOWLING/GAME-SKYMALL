@@ -34,7 +34,7 @@
       margin-top: -50vw;
       margin-left: -50vh;
       overflow: auto;
-      padding: 10px;
+      padding: 15px;
     }
     
     .mobile-optimized-table {
@@ -42,6 +42,15 @@
       height: 100%;
       display: flex;
       flex-direction: column;
+    }
+
+    .status-message {
+      text-align: center;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      font-size: 14px;
     }
 
     .table-container {
@@ -112,6 +121,7 @@
       z-index: 4;
     }
 
+    /* Остальные заголовки */
     #letter-row th:nth-child(n+3) {
       background-color: #ecf0f1 !important;
       color: #2c3e50;
@@ -150,6 +160,10 @@
       width: 30px;
       min-width: 30px;
     }
+
+    .hidden-column {
+      display: none !important;
+    }
     
     .active-cell {
       background-color: #2c3e50;
@@ -162,6 +176,7 @@
       background-color: #fa849c !important;
     }
 
+    /* Date-picker */
     #date-picker {
       width: 100%;
       padding: 6px;
@@ -176,7 +191,54 @@
       appearance: none;
       outline: none;
     }
+    
+    #date-picker:hover {
+      background-color: #e0e0e0;
+    }
+    
+    #date-picker::-webkit-calendar-picker-indicator {
+      filter: invert(0.3);
+      cursor: pointer;
+    }
 
+    .toggle-btn {
+      cursor: pointer;
+      user-select: none;
+      color: #fff;
+      background-color: #1a2f40;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 12px;
+      line-height: 20px;
+      padding: 0 4px;
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      text-align: center;
+      transition: background-color 0.1s ease;
+    }
+    
+    .toggle-btn:hover {
+      background-color: #dc143c;
+    }
+
+    .error {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+    
+    .instructions {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* Медиа-запрос для очень маленьких экранов */
     @media (max-height: 500px) {
       td, th {
         height: 24px;
@@ -208,6 +270,12 @@
 <body>
   <div class="rotated-container">
     <div class="mobile-optimized-table">
+      <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+      
+      <div class="instructions">
+        Используйте два пальца для прокрутки таблицы влево/вправо
+      </div>
+      
       <div class="table-container">
         <table id="main-table">
           <thead>
@@ -218,79 +286,171 @@
               <th>
                 <input type="date" id="date-picker" />
               </th>
+              <!-- Динамически добавленные заголовки -->
             </tr>
             <tr id="time-row">
               <th>LANE</th>
               <th id="overall-total">0ч 0м</th>
+              <!-- Динамически добавленные заголовки времени -->
             </tr>
           </thead>
-          <tbody id="table-body"></tbody>
+          <tbody id="table-body">
+            <!-- Динамически добавленные строки -->
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 
   <script>
+    // Конфигурация
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
-    const totalMinutes = 1440;
-    const timeColumns = 96; 
+    const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
+    const timeColumns = 96; // Уменьшаем количество колонок для лучшего отображения
     
+    // Элементы DOM
     const letterRow = document.getElementById('letter-row'),
           timeRow = document.getElementById('time-row'),
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
-          datePicker = document.getElementById('date-picker');
+          datePicker = document.getElementById('date-picker'),
+          statusEl = document.getElementById('status');
 
-    const allDataCells = [];
+    // Данные
+    const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
 
+    // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
       const h = Math.floor(mins / 60);
       const m = mins % 60;
       return `${h}ч ${m}м`;
     }
 
+    // Переключение видимости группы столбцов
+    function toggleGroup(idxs) {
+      idxs.forEach(i => {
+        [timeRow, letterRow].forEach(row => {
+          if (row.children[i+2]) {
+            row.children[i+2].classList.toggle('hidden-column');
+          }
+        });
+        
+        tableBody.querySelectorAll('tr').forEach(tr => {
+          if (tr.children[i+2]) {
+            tr.children[i+2].classList.toggle('hidden-column');
+          }
+        });
+      });
+    }
+
+    // Проверка, все ли группы скрыты
+    function areAllHidden() {
+      return allGroups.every(g => {
+        const el = timeRow.children[g[0]+2];
+        return el && el.classList.contains('hidden-column');
+      });
+    }
+
+    // Переключение видимости всех групп
+    function toggleAll(forceHide=null) {
+      const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
+      allGroups.forEach(g => {
+        const el = timeRow.children[g[0]+2];
+        if (el) {
+          const hidden = el.classList.contains('hidden-column');
+          if (hidden !== shouldHide) toggleGroup(g);
+        }
+      });
+      document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
+    }
+
+    // Создание кнопки переключения группы
+    function makeBtn(idxs, title) {
+      const btn = document.createElement('div');
+      btn.className = 'toggle-btn';
+      btn.title = title;
+      btn.textContent = '+';
+      let last = 0;
+      btn.onclick = () => {
+        const now = Date.now();
+        if (now - last < 300) toggleAll(!areAllHidden());
+        else {
+          toggleGroup(idxs);
+          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
+        }
+        last = now;
+      };
+      return btn;
+    }
+
+    // Построение заголовков таблицы
     function buildHeaders() {
-      const fragL = document.createDocumentFragment();
-      const fragT = document.createDocumentFragment();
+      const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
+      
+      // Создаем колонки с интервалом в 15 минут для лучшего отображения
       for (let i = 0; i < timeColumns; i++) {
         const minutes = Math.floor(i * (totalMinutes / timeColumns));
         const h = Math.floor(minutes / 60), m = minutes % 60;
+        
         const thL = document.createElement('th'); 
         fragL.appendChild(thL);
+        
         const thT = document.createElement('th');
         thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
         fragT.appendChild(thT);
+        
+        // Добавляем кнопки переключения для групп колонок
+        if (i % 4 === 0) {
+          const start = i + 1;
+          const end = Math.min(i + 4, timeColumns);
+          const idxs = [];
+          for (let j = start; j <= end; j++) idxs.push(j);
+          
+          if (idxs.length) {
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть колонки`));
+            allGroups.push(idxs);
+          }
+        }
       }
+      
       letterRow.appendChild(fragL);
       timeRow.appendChild(fragT);
     }
 
+    // Построение тела таблицы
     function buildBody() {
       const frag = document.createDocumentFragment();
+      
       for (let lane = 0; lane < 16; lane++) {
         const tr = document.createElement('tr');
         const thLane = document.createElement('th'); 
         thLane.textContent = lane + 1; 
         tr.appendChild(thLane);
+        
         const thCount = document.createElement('th'); 
         tr.appendChild(thCount);
+        
         const cells = [];
         for (let i = 0; i < timeColumns; i++) {
           const td = document.createElement('td');
           tr.appendChild(td);
           cells.push(td);
         }
+        
         frag.appendChild(tr);
         allDataCells.push({ header: thCount, cells });
       }
+      
       tableBody.appendChild(frag);
     }
 
+    // Очистка данных таблицы
     function clearRows() {
       fetchControllers.forEach(controller => controller.abort());
       fetchControllers.clear();
+      
       overallTotal.textContent = '0ч 0м';
       allDataCells.forEach(r => {
         r.header.textContent = '';
@@ -302,75 +462,162 @@
       });
     }
 
+    // Установка статуса загрузки
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      if (isError) {
+        statusEl.classList.add('error');
+      } else {
+        statusEl.classList.remove('error');
+      }
+    }
+
+    // Загрузка данных для одной дорожки
     async function loadLaneData(idx, selectedDate) {
       const controller = new AbortController();
       fetchControllers.set(idx, controller);
+      
       try {
         const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
         const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+        
+        if (!response.ok) {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
-        if (data.error) throw new Error(data.error);
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         return data;
       } finally {
         fetchControllers.delete(idx);
       }
     }
 
+    // Загрузка данных с бэкенда
     async function loadData() {
       if (!datePicker.value || isLoading) return;
+      
       isLoading = true;
       clearRows();
+      setStatus('Загрузка данных...');
+      
       const selectedDate = datePicker.value;
-      let sumAll = 0;
+      let done = 0, sumAll = 0;
+      const errors = [];
       const promises = [];
-      for (let idx = 0; idx < allDataCells.length; idx++) {
-        promises.push(
-          loadLaneData(idx, selectedDate)
-            .then(data => {
-              const row = allDataCells[idx];
-              let sum = 0;
-              row.cells.forEach((cell, i) => {
-                const minutes = Math.floor(i * (totalMinutes / timeColumns));
-                const h = Math.floor(minutes / 60), m = minutes % 60;
-                const time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-                cell.classList.remove('active-cell');
-                if (data.c && data.c.includes(time)) {
-                  cell.classList.add('active-cell');
-                  cell.textContent = '🎳';
-                  sum++;
-                } else if (data.b && data.b.includes(time)) {
-                  cell.textContent = '';
-                  cell.style.color = 'black';
-                } else {
-                  cell.textContent = '⚡';
-                  cell.style.color = '#dc143c';
-                }
-              });
-              row.header.textContent = formatMinutes(sum);
-              sumAll += sum;
-              overallTotal.textContent = formatMinutes(sumAll);
-            })
-            .catch(err => console.error(`Ошибка дорожки ${idx+1}:`, err))
-        );
+      
+      try {
+        for (let idx = 0; idx < allDataCells.length; idx++) {
+          promises.push(
+            loadLaneData(idx, selectedDate)
+              .then(data => {
+                const row = allDataCells[idx];
+                let sum = 0;
+                
+                row.cells.forEach((cell, i) => {
+                  // Вычисляем время для этой колонки
+                  const minutes = Math.floor(i * (totalMinutes / timeColumns));
+                  const h = Math.floor(minutes / 60), m = minutes % 60;
+                  const time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+                  
+                  cell.classList.remove('active-cell');
+                  
+                  if (data.c && data.c.includes(time)) {
+                    cell.classList.add('active-cell');
+                    cell.textContent = '🎳';
+                    sum++;
+                  } else if (data.b && data.b.includes(time)) {
+                    cell.textContent = '';
+                    cell.style.color = 'black';
+                  } else {
+                    cell.textContent = '⚡';
+                    cell.style.color = '#dc143c';
+                  }
+                });
+                
+                row.header.textContent = formatMinutes(sum);
+                sumAll += sum;
+                done++;
+                
+                setStatus(`Загружено ${done} из 16 дорожек...`);
+              })
+              .catch(err => {
+                console.error(`Ошибка дорожки ${idx+1}:`, err);
+                errors.push(`Дорожка ${idx+1}: ${err.message}`);
+                done++;
+              })
+          );
+        }
+        
+        await Promise.allSettled(promises);
+        
+        overallTotal.textContent = formatMinutes(sumAll);
+        
+        if (errors.length > 0) {
+          setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
+        } else {
+          setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
+        }
+        
+      } catch (error) {
+        console.error('Общая ошибка:', error);
+        setStatus(`Ошибка загрузки: ${error.message}`, true);
+      } finally {
+        isLoading = false;
       }
-      await Promise.allSettled(promises);
-      isLoading = false;
     }
 
+    // Инициализация при загрузке страницы
     function init() {
       buildHeaders();
       buildBody();
+      
       datePicker.addEventListener('change', loadData);
+      
+      document.addEventListener('mouseover', function(e) {
+        if (e.target.tagName === 'TD') {
+          const td = e.target, ci = td.cellIndex, row = td.parentElement;
+          row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
+          
+          document.querySelectorAll('#main-table tbody tr').forEach(r => {
+            const c = r.children[ci];
+            if (c) c.classList.add('hover-col');
+          });
+          
+          const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
+          if (th) th.classList.add('hover-col');
+        }
+      });
+
+      document.addEventListener('mouseout', function(e) {
+        if (e.target.tagName === 'TD') {
+          document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
+            el.classList.remove('hover-row', 'hover-col');
+          });
+        }
+      });
+
+      // Установка текущей даты по умолчанию
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
+      
+      // Сворачиваем все группы при загрузке
+      setTimeout(() => toggleAll(true), 100);
+      
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
       });
+      
+      // Автоматическая загрузка данных при инициализации
       setTimeout(loadData, 500);
     }
 
+    // Запуск инициализации при загрузке страницы
     window.addEventListener('load', init);
   </script>
 </body>
