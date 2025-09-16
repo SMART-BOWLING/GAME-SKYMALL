@@ -3,27 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <title>Данные по дате – 16 таблиц</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-    /* Добавляем стили для поворота */
+    /* Добавляем поворот всей страницы */
     html, body {
       width: 100vh;
       height: 100vw;
       margin: 0;
       padding: 0;
       overflow: hidden;
+      transform: rotate(90deg) translateX(-100vw);
       transform-origin: top left;
+      position: absolute;
     }
     
     body {
-      transform: rotate(-90deg) translateX(-100%);
-      position: absolute;
-      top: 0;
-      left: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
+      margin: 0;
       padding: 20px;
       color: #333;
+      width: calc(100vh - 40px);
+      height: calc(100vw - 40px);
+      overflow: auto;
       box-sizing: border-box;
     }
 
@@ -39,7 +40,7 @@
     table {
       border-collapse: collapse;
       width: 100%;
-      table-layout: auto;
+      table-layout: auto; /* Изменено с fixed на auto */
       background-color: white;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       border-radius: 12px;
@@ -77,7 +78,7 @@
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 50px;
+      width: 50px; /* Фиксированная ширина */
       min-width: 50px;
       max-width: 50px;
     }
@@ -87,7 +88,7 @@
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 120px;
+      width: 120px; /* Фиксированная ширина */
       min-width: 120px;
       max-width: 120px;
       overflow: hidden;
@@ -116,7 +117,7 @@
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
-      width: auto;
+      width: auto; /* Автоматическая ширина */
     }
     #time-row th div {
       display: flex;
@@ -236,27 +237,27 @@
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) {
-        width: 40px;
+        width: 40px; /* Уменьшенная ширина для мобильных */
         min-width: 40px;
         max-width: 40px;
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
-        left: 40px;
-        width: 100px;
+        left: 40px; /* Соответствует новой ширине первого столбца */
+        width: 100px; /* Уменьшенная ширина для мобильных */
         min-width: 100px;
         max-width: 100px;
       }
       
       td, th {
-        font-size: 12px;
+        font-size: 12px; /* Уменьшенный размер шрифта */
         height: 25px;
       }
       
       #time-row th .hour,
       #time-row th .minute {
-        font-size: 10px;
+        font-size: 10px; /* Уменьшенный размер шрифта для времени */
       }
       
       .toggle-btn {
