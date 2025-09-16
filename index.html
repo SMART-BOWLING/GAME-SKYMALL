@@ -4,43 +4,80 @@
   <meta charset="UTF-8" />
   <title>Данные по дате – 16 таблиц</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       color: #333;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+    }
+    
+    .rotated-container {
+      transform: rotate(90deg);
+      transform-origin: center center;
+      width: 100vh;
+      height: 100vw;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -50vw;
+      margin-left: -50vh;
+      overflow: auto;
+      padding: 15px;
+    }
+    
+    .mobile-optimized-table {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
-    .table-wrapper {
-      overflow-x: auto;
-      overflow-y: visible;
-      position: relative;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-      margin: 0 auto;
+    .status-message {
+      text-align: center;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 5px;
+      background-color: #f8f9fa;
+      font-size: 14px;
+    }
+
+    .table-container {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid #d7dce3;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
     table {
       border-collapse: collapse;
-      width: 100%;
-      table-layout: auto;
+      width: auto;
+      table-layout: fixed;
       background-color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border-radius: 12px;
-      min-width: 800px;
     }
 
     td, th {
       height: 30px;
       text-align: center;
-      font-size: 13px;
+      font-size: 12px;
       border: 1px solid #d7dce3;
-      box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
+      padding: 2px;
     }
 
     th {
@@ -51,31 +88,25 @@
 
     /* Фиксированные первые два столбца */
     #main-table th:nth-child(1),
-    #main-table td:nth-child(1),
-    #main-table th:nth-child(2),
-    #main-table td:nth-child(2) {
-      position: sticky;
-    }
-    #main-table th:nth-child(1),
     #main-table td:nth-child(1) {
+      position: sticky;
       left: 0;
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 50px;
-      min-width: 50px;
-      max-width: 50px;
+      width: 40px;
+      min-width: 40px;
     }
+    
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 50px;
+      position: sticky;
+      left: 40px;
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 120px;
-      min-width: 120px;
-      max-width: 120px;
-      overflow: hidden;
+      width: 90px;
+      min-width: 90px;
     }
 
     /* Заголовки первой и второй строки */
@@ -94,36 +125,51 @@
       background-color: #ecf0f1 !important;
       color: #2c3e50;
       border: 1px solid #e0e0e0 !important;
+      width: 30px;
+      min-width: 30px;
     }
+    
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 4px 2px;
+      padding: 2px 1px;
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
-      width: auto;
+      width: 30px;
+      min-width: 30px;
     }
+    
     #time-row th div {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+    
     #time-row th .hour {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: bold;
     }
+    
     #time-row th .minute {
-      font-size: 12px;
+      font-size: 10px;
+    }
+
+    /* Ячейки данных */
+    #table-body td:nth-child(n+3) {
+      width: 30px;
+      min-width: 30px;
     }
 
     .hidden-column {
       display: none !important;
     }
+    
     .active-cell {
       background-color: #2c3e50;
       color: #fff;
       font-weight: 700;
     }
+    
     td.hover-row, th.hover-row,
     td.hover-col, th.hover-col {
       background-color: #fa849c !important;
@@ -132,22 +178,23 @@
     /* Date-picker */
     #date-picker {
       width: 100%;
-      padding: 8px;
-      font-size: 13px;
+      padding: 6px;
+      font-size: 12px;
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 10px;
+      border-radius: 8px;
       background-color: #ecf0f1;
       color: #1a2f40;
-      box-sizing: border-box;
       cursor: pointer;
       -webkit-appearance: none;
       appearance: none;
       outline: none;
     }
+    
     #date-picker:hover {
       background-color: #e0e0e0;
     }
+    
     #date-picker::-webkit-calendar-picker-indicator {
       filter: invert(0.3);
       cursor: pointer;
@@ -158,28 +205,20 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 4px;
+      border-radius: 3px;
       font-weight: bold;
-      font-size: 14px;
-      line-height: 27px;
-      padding: 0 6px;
+      font-size: 12px;
+      line-height: 20px;
+      padding: 0 4px;
       display: inline-block;
-      width: 10px;
-      height: 30px;
+      width: 8px;
+      height: 20px;
       text-align: center;
       transition: background-color 0.1s ease;
     }
+    
     .toggle-btn:hover {
       background-color: #dc143c;
-    }
-
-    .status-message {
-      text-align: center;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      background-color: #f8f9fa;
-      font-size: 14px;
     }
 
     .error {
@@ -190,35 +229,85 @@
     .success {
       color: #2e7d32;
     }
+    
+    .instructions {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    /* Медиа-запрос для очень маленьких экранов */
+    @media (max-height: 500px) {
+      td, th {
+        height: 24px;
+        font-size: 11px;
+      }
+      
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) {
+        width: 35px;
+        min-width: 35px;
+      }
+      
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) {
+        left: 35px;
+        width: 80px;
+        min-width: 80px;
+      }
+      
+      #letter-row th:nth-child(n+3),
+      #time-row th:nth-child(n+3),
+      #table-body td:nth-child(n+3) {
+        width: 25px;
+        min-width: 25px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-  
-  <div class="table-wrapper">
-    <table id="main-table">
-      <thead>
-        <tr id="letter-row">
-          <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-            <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-          </th>
-          <th>
-            <input type="date" id="date-picker" />
-          </th>
-        </tr>
-        <tr id="time-row">
-          <th>LANE</th>
-          <th id="overall-total">0ч 0м</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
+  <div class="rotated-container">
+    <div class="mobile-optimized-table">
+      <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+      
+      <div class="instructions">
+        Используйте два пальца для прокрутки таблицы влево/вправо
+      </div>
+      
+      <div class="table-container">
+        <table id="main-table">
+          <thead>
+            <tr id="letter-row">
+              <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+                <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:35px;height:35px;" />
+              </th>
+              <th>
+                <input type="date" id="date-picker" />
+              </th>
+              <!-- Динамически добавленные заголовки -->
+            </tr>
+            <tr id="time-row">
+              <th>LANE</th>
+              <th id="overall-total">0ч 0м</th>
+              <!-- Динамически добавленные заголовки времени -->
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Динамически добавленные строки -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
+    // Конфигурация
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
-
+    const timeColumns = 96; // Уменьшаем количество колонок для лучшего отображения
+    
+    // Элементы DOM
     const letterRow = document.getElementById('letter-row'),
           timeRow = document.getElementById('time-row'),
           overallTotal = document.getElementById('overall-total'),
@@ -226,16 +315,19 @@
           datePicker = document.getElementById('date-picker'),
           statusEl = document.getElementById('status');
 
+    // Данные
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
 
+    // Форматирование минут в читаемый вид
     function formatMinutes(mins) {
       const h = Math.floor(mins / 60);
       const m = mins % 60;
       return `${h}ч ${m}м`;
     }
 
+    // Переключение видимости группы столбцов
     function toggleGroup(idxs) {
       idxs.forEach(i => {
         [timeRow, letterRow].forEach(row => {
@@ -243,6 +335,7 @@
             row.children[i+2].classList.toggle('hidden-column');
           }
         });
+        
         tableBody.querySelectorAll('tr').forEach(tr => {
           if (tr.children[i+2]) {
             tr.children[i+2].classList.toggle('hidden-column');
@@ -251,6 +344,7 @@
       });
     }
 
+    // Проверка, все ли группы скрыты
     function areAllHidden() {
       return allGroups.every(g => {
         const el = timeRow.children[g[0]+2];
@@ -258,6 +352,7 @@
       });
     }
 
+    // Переключение видимости всех групп
     function toggleAll(forceHide=null) {
       const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
       allGroups.forEach(g => {
@@ -270,6 +365,7 @@
       document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
     }
 
+    // Создание кнопки переключения группы
     function makeBtn(idxs, title) {
       const btn = document.createElement('div');
       btn.className = 'toggle-btn';
@@ -288,59 +384,72 @@
       return btn;
     }
 
+    // Построение заголовков таблицы
     function buildHeaders() {
       const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
-      for (let i = 1; i <= totalMinutes; i++) {
+      
+      // Создаем колонки с интервалом в 15 минут для лучшего отображения
+      for (let i = 0; i < timeColumns; i++) {
+        const minutes = Math.floor(i * (totalMinutes / timeColumns));
+        const h = Math.floor(minutes / 60), m = minutes % 60;
+        
         const thL = document.createElement('th'); 
         fragL.appendChild(thL);
-
-        const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
+        
         const thT = document.createElement('th');
         thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
         fragT.appendChild(thT);
-
-        if ((h*60 + m) % groupInterval === 0) {
-          const start = (h*60 + m) === 0 ? 1 : (h*60 + m) + 1;
-          const end = Math.min(start + groupSize - 1, totalMinutes - 1);
+        
+        // Добавляем кнопки переключения для групп колонок
+        if (i % 4 === 0) {
+          const start = i + 1;
+          const end = Math.min(i + 4, timeColumns);
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
-
+          
           if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть колонки`));
             allGroups.push(idxs);
           }
         }
       }
+      
       letterRow.appendChild(fragL);
       timeRow.appendChild(fragT);
     }
 
+    // Построение тела таблицы
     function buildBody() {
       const frag = document.createDocumentFragment();
+      
       for (let lane = 0; lane < 16; lane++) {
         const tr = document.createElement('tr');
         const thLane = document.createElement('th'); 
         thLane.textContent = lane + 1; 
         tr.appendChild(thLane);
-
+        
         const thCount = document.createElement('th'); 
         tr.appendChild(thCount);
-
+        
         const cells = [];
-        for (let i = 0; i < totalMinutes; i++) {
+        for (let i = 0; i < timeColumns; i++) {
           const td = document.createElement('td');
           tr.appendChild(td);
           cells.push(td);
         }
+        
         frag.appendChild(tr);
         allDataCells.push({ header: thCount, cells });
       }
+      
       tableBody.appendChild(frag);
     }
 
+    // Очистка данных таблицы
     function clearRows() {
       fetchControllers.forEach(controller => controller.abort());
       fetchControllers.clear();
+      
       overallTotal.textContent = '0ч 0м';
       allDataCells.forEach(r => {
         r.header.textContent = '';
@@ -352,6 +461,7 @@
       });
     }
 
+    // Установка статуса загрузки
     function setStatus(message, isError = false) {
       statusEl.textContent = message;
       if (isError) {
@@ -361,30 +471,44 @@
       }
     }
 
+    // Загрузка данных для одной дорожки
     async function loadLaneData(idx, selectedDate) {
       const controller = new AbortController();
       fetchControllers.set(idx, controller);
+      
       try {
         const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
         const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+        
+        if (!response.ok) {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        
         const data = await response.json();
-        if (data.error) throw new Error(data.error);
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
         return data;
       } finally {
         fetchControllers.delete(idx);
       }
     }
 
+    // Загрузка данных с бэкенда
     async function loadData() {
       if (!datePicker.value || isLoading) return;
+      
       isLoading = true;
       clearRows();
       setStatus('Загрузка данных...');
+      
       const selectedDate = datePicker.value;
       let done = 0, sumAll = 0;
       const errors = [];
       const promises = [];
+      
       try {
         for (let idx = 0; idx < allDataCells.length; idx++) {
           promises.push(
@@ -392,9 +516,15 @@
               .then(data => {
                 const row = allDataCells[idx];
                 let sum = 0;
+                
                 row.cells.forEach((cell, i) => {
-                  const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
+                  // Вычисляем время для этой колонки
+                  const minutes = Math.floor(i * (totalMinutes / timeColumns));
+                  const h = Math.floor(minutes / 60), m = minutes % 60;
+                  const time = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+                  
                   cell.classList.remove('active-cell');
+                  
                   if (data.c && data.c.includes(time)) {
                     cell.classList.add('active-cell');
                     cell.textContent = '🎳';
@@ -403,13 +533,15 @@
                     cell.textContent = '';
                     cell.style.color = 'black';
                   } else {
-                    cell.textContent = '⚡︎';
+                    cell.textContent = '⚡';
                     cell.style.color = '#dc143c';
                   }
                 });
+                
                 row.header.textContent = formatMinutes(sum);
                 sumAll += sum;
                 done++;
+                
                 setStatus(`Загружено ${done} из 16 дорожек...`);
               })
               .catch(err => {
@@ -419,13 +551,17 @@
               })
           );
         }
+        
         await Promise.allSettled(promises);
+        
         overallTotal.textContent = formatMinutes(sumAll);
+        
         if (errors.length > 0) {
           setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
         } else {
           setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
         }
+        
       } catch (error) {
         console.error('Общая ошибка:', error);
         setStatus(`Ошибка загрузки: ${error.message}`, true);
@@ -434,22 +570,28 @@
       }
     }
 
+    // Инициализация при загрузке страницы
     function init() {
       buildHeaders();
       buildBody();
+      
       datePicker.addEventListener('change', loadData);
+      
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
           const td = e.target, ci = td.cellIndex, row = td.parentElement;
           row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
+          
           document.querySelectorAll('#main-table tbody tr').forEach(r => {
             const c = r.children[ci];
             if (c) c.classList.add('hover-col');
           });
+          
           const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
           if (th) th.classList.add('hover-col');
         }
       });
+
       document.addEventListener('mouseout', function(e) {
         if (e.target.tagName === 'TD') {
           document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
@@ -457,16 +599,24 @@
           });
         }
       });
+
+      // Установка текущей даты по умолчанию
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
+      
+      // Сворачиваем все группы при загрузке
       setTimeout(() => toggleAll(true), 100);
+      
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
       });
+      
+      // Автоматическая загрузка данных при инициализации
       setTimeout(loadData, 500);
     }
 
+    // Запуск инициализации при загрузке страницы
     window.addEventListener('load', init);
   </script>
 </body>
