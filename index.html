@@ -64,7 +64,7 @@
 
     table {
       border-collapse: collapse;
-      width: 100%;
+      width: auto;
       table-layout: fixed;
       background-color: white;
     }
@@ -127,6 +127,7 @@
       color: #2c3e50;
       border: 1px solid #e0e0e0 !important;
       width: 30px;
+      min-width: 30px;
     }
     
     #time-row th:nth-child(n+3) {
@@ -136,6 +137,7 @@
       vertical-align: middle;
       border: 1px solid #e0e0e0;
       width: 30px;
+      min-width: 30px;
     }
     
     #time-row th div {
@@ -303,7 +305,7 @@
   <script>
     // Конфигурация
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
-    const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
+    const totalMinutes = 1440;
     const timeColumns = 96; // Уменьшаем количество колонок для лучшего отображения
     
     // Элементы DOM
@@ -315,7 +317,7 @@
           statusEl = document.getElementById('status');
 
     // Данные
-    const allGroups = [], allDataCells = [];
+    const allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
 
@@ -326,66 +328,10 @@
       return `${h}ч ${m}м`;
     }
 
-    // Переключение видимости группы столбцов
-    function toggleGroup(idxs) {
-      idxs.forEach(i => {
-        [timeRow, letterRow].forEach(row => {
-          if (row.children[i+2]) {
-            row.children[i+2].classList.toggle('hidden-column');
-          }
-        });
-        
-        tableBody.querySelectorAll('tr').forEach(tr => {
-          if (tr.children[i+2]) {
-            tr.children[i+2].classList.toggle('hidden-column');
-          }
-        });
-      });
-    }
-
-    // Проверка, все ли группы скрыты
-    function areAllHidden() {
-      return allGroups.every(g => {
-        const el = timeRow.children[g[0]+2];
-        return el && el.classList.contains('hidden-column');
-      });
-    }
-
-    // Переключение видимости всех групп
-    function toggleAll(forceHide=null) {
-      const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
-      allGroups.forEach(g => {
-        const el = timeRow.children[g[0]+2];
-        if (el) {
-          const hidden = el.classList.contains('hidden-column');
-          if (hidden !== shouldHide) toggleGroup(g);
-        }
-      });
-      document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
-    }
-
-    // Создание кнопки переключения группы
-    function makeBtn(idxs, title) {
-      const btn = document.createElement('div');
-      btn.className = 'toggle-btn';
-      btn.title = title;
-      btn.textContent = '+';
-      let last = 0;
-      btn.onclick = () => {
-        const now = Date.now();
-        if (now - last < 300) toggleAll(!areAllHidden());
-        else {
-          toggleGroup(idxs);
-          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
-        }
-        last = now;
-      };
-      return btn;
-    }
-
     // Построение заголовков таблицы
     function buildHeaders() {
-      const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
+      const fragL = document.createDocumentFragment();
+      const fragT = document.createDocumentFragment();
       
       // Создаем колонки с интервалом в 15 минут для лучшего отображения
       for (let i = 0; i < timeColumns; i++) {
@@ -398,19 +344,6 @@
         const thT = document.createElement('th');
         thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
         fragT.appendChild(thT);
-        
-        // Добавляем кнопки переключения для групп колонок
-        if (i % 4 === 0) {
-          const start = i + 1;
-          const end = Math.min(i + 4, timeColumns);
-          const idxs = [];
-          for (let j = start; j <= end; j++) idxs.push(j);
-          
-          if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть колонки`));
-            allGroups.push(idxs);
-          }
-        }
       }
       
       letterRow.appendChild(fragL);
@@ -532,7 +465,7 @@
                     cell.textContent = '';
                     cell.style.color = 'black';
                   } else {
-                    cell.textContent = '⚡︎';
+                    cell.textContent = '⚡';
                     cell.style.color = '#dc143c';
                   }
                 });
@@ -580,9 +513,6 @@
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
-      
-      // Сворачиваем все группы при загрузке
-      setTimeout(() => toggleAll(true), 100);
       
       document.getElementById('logo-wrapper').addEventListener('click', () => {
         datePicker.click();
