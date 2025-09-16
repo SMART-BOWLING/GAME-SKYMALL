@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Данные по дате – 16 таблиц</title>
   <style>
     /* Стиль для кнопки поворота */
@@ -18,6 +19,7 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     
     .rotate-button:hover {
@@ -36,6 +38,22 @@
       margin-top: -50vw;
       margin-left: -50vh;
       overflow: hidden;
+      padding: 0;
+    }
+    
+    /* Контейнер для повернутого режима */
+    .rotated-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+    
+    body.rotated .rotated-container {
+      display: block;
+    }
+    
+    body.rotated .normal-container {
+      display: none;
     }
 
     body {
@@ -45,6 +63,13 @@
       padding: 20px;
       color: #333;
       transition: transform 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    .normal-container {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .table-wrapper {
@@ -54,6 +79,28 @@
       -webkit-overflow-scrolling: touch;
       max-width: 100%;
       margin: 0 auto;
+    }
+    
+    /* Улучшенное отображение таблицы в повернутом режиме */
+    body.rotated .table-wrapper {
+      width: 100vw;
+      height: calc(100vh - 40px);
+      overflow: auto;
+    }
+    
+    body.rotated table {
+      min-width: auto;
+      max-width: none;
+    }
+    
+    body.rotated .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    body.rotated .table-wrapper::-webkit-scrollbar-thumb {
+      background: #2c3e50;
+      border-radius: 4px;
     }
 
     table {
@@ -250,6 +297,42 @@
       td, th { font-size: 12px; height: 25px; }
       #time-row th .hour, #time-row th .minute { font-size: 10px; }
       .toggle-btn { font-size: 12px; height: 25px; line-height: 22px; }
+      
+      /* Адаптация для повернутого режима на мобильных */
+      body.rotated {
+        padding: 5px;
+      }
+      
+      body.rotated .table-wrapper {
+        height: calc(100vh - 10px);
+      }
+      
+      body.rotated td, 
+      body.rotated th {
+        font-size: 11px;
+        height: 22px;
+        padding: 2px;
+      }
+      
+      body.rotated #main-table th:nth-child(1),
+      body.rotated #main-table td:nth-child(1) { 
+        width: 35px; 
+        min-width: 35px; 
+        max-width: 35px; 
+      }
+      
+      body.rotated #main-table th:nth-child(2),
+      body.rotated #main-table td:nth-child(2) { 
+        left: 35px; 
+        width: 90px; 
+        min-width: 90px; 
+        max-width: 90px; 
+      }
+      
+      body.rotated #time-row th .hour, 
+      body.rotated #time-row th .minute { 
+        font-size: 9px; 
+      }
     }
   </style>
 </head>
@@ -257,26 +340,52 @@
   <!-- Кнопка поворота страницы -->
   <button class="rotate-button" id="rotate-button">↻ Повернуть</button>
   
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+  <div class="normal-container">
+    <div id="status" class="status-message">Выберите дату для загрузки данных</div>
+    
+    <div class="table-wrapper">
+      <table id="main-table">
+        <thead>
+          <tr id="letter-row">
+            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
+            </th>
+            <th>
+              <input type="date" id="date-picker" />
+            </th>
+          </tr>
+          <tr id="time-row">
+            <th>LANE</th>
+            <th id="overall-total">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
   
-  <div class="table-wrapper">
-    <table id="main-table">
-      <thead>
-        <tr id="letter-row">
-          <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-            <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
-          </th>
-          <th>
-            <input type="date" id="date-picker" />
-          </th>
-        </tr>
-        <tr id="time-row">
-          <th>LANE</th>
-          <th id="overall-total">0ч 0м</th>
-        </tr>
-      </thead>
-      <tbody id="table-body"></tbody>
-    </table>
+  <div class="rotated-container">
+    <div id="status-rotated" class="status-message">Выберите дату для загрузки данных</div>
+    
+    <div class="table-wrapper">
+      <table id="main-table-rotated">
+        <thead>
+          <tr id="letter-row-rotated">
+            <th class="logo-cell" id="logo-wrapper-rotated" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
+            </th>
+            <th>
+              <input type="date" id="date-picker-rotated" />
+            </th>
+          </tr>
+          <tr id="time-row-rotated">
+            <th>LANE</th>
+            <th id="overall-total-rotated">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body-rotated"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -289,7 +398,16 @@
           datePicker = document.getElementById('date-picker'),
           statusEl = document.getElementById('status'),
           rotateButton = document.getElementById('rotate-button');
+          
+    const letterRowRotated = document.getElementById('letter-row-rotated'),
+          timeRowRotated = document.getElementById('time-row-rotated'),
+          overallTotalRotated = document.getElementById('overall-total-rotated'),
+          tableBodyRotated = document.getElementById('table-body-rotated'),
+          datePickerRotated = document.getElementById('date-picker-rotated'),
+          statusElRotated = document.getElementById('status-rotated');
+          
     const allGroups = [], allDataCells = [];
+    const allGroupsRotated = [], allDataCellsRotated = [];
     let isLoading = false;
     const fetchControllers = new Map();
 
@@ -297,6 +415,13 @@
     function toggleRotation() {
       document.body.classList.toggle('rotated');
       rotateButton.textContent = document.body.classList.contains('rotated') ? '↻ Вернуть' : '↻ Повернуть';
+      
+      // Синхронизируем значения datepicker
+      if (document.body.classList.contains('rotated')) {
+        datePickerRotated.value = datePicker.value;
+      } else {
+        datePicker.value = datePickerRotated.value;
+      }
     }
 
     // Добавляем обработчик события для кнопки поворота
@@ -308,37 +433,49 @@
       return `${h}ч ${m}м`;
     }
 
-    function toggleGroup(idxs) {
+    function toggleGroup(idxs, isRotated = false) {
+      const timeRowEl = isRotated ? timeRowRotated : timeRow;
+      const letterRowEl = isRotated ? letterRowRotated : letterRow;
+      const tableBodyEl = isRotated ? tableBodyRotated : tableBody;
+      
       idxs.forEach(i => {
-        [timeRow, letterRow].forEach(row => {
+        [timeRowEl, letterRowEl].forEach(row => {
           if (row.children[i+2]) row.children[i+2].classList.toggle('hidden-column');
         });
-        tableBody.querySelectorAll('tr').forEach(tr => {
+        tableBodyEl.querySelectorAll('tr').forEach(tr => {
           if (tr.children[i+2]) tr.children[i+2].classList.toggle('hidden-column');
         });
       });
     }
 
-    function areAllHidden() {
-      return allGroups.every(g => {
-        const el = timeRow.children[g[0]+2];
+    function areAllHidden(isRotated = false) {
+      const groups = isRotated ? allGroupsRotated : allGroups;
+      const timeRowEl = isRotated ? timeRowRotated : timeRow;
+      
+      return groups.every(g => {
+        const el = timeRowEl.children[g[0]+2];
         return el && el.classList.contains('hidden-column');
       });
     }
 
-    function toggleAll(forceHide=null) {
-      const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
-      allGroups.forEach(g => {
-        const el = timeRow.children[g[0]+2];
+    function toggleAll(forceHide=null, isRotated=false) {
+      const groups = isRotated ? allGroupsRotated : allGroups;
+      const timeRowEl = isRotated ? timeRowRotated : timeRow;
+      
+      const shouldHide = forceHide !== null ? forceHide : !areAllHidden(isRotated);
+      groups.forEach(g => {
+        const el = timeRowEl.children[g[0]+2];
         if (el) {
           const hidden = el.classList.contains('hidden-column');
-          if (hidden !== shouldHide) toggleGroup(g);
+          if (hidden !== shouldHide) toggleGroup(g, isRotated);
         }
       });
-      document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
+      
+      const selector = isRotated ? '#main-table-rotated' : '#main-table';
+      document.querySelectorAll(`${selector} .toggle-btn`).forEach(b => b.textContent = shouldHide ? '+' : '–');
     }
 
-    function makeBtn(idxs, title) {
+    function makeBtn(idxs, title, isRotated = false) {
       const btn = document.createElement('div');
       btn.className = 'toggle-btn';
       btn.title = title;
@@ -346,18 +483,21 @@
       let last = 0;
       btn.onclick = () => {
         const now = Date.now();
-        if (now - last < 300) toggleAll(!areAllHidden());
+        if (now - last < 300) toggleAll(!areAllHidden(isRotated), isRotated);
         else {
-          toggleGroup(idxs);
-          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
+          toggleGroup(idxs, isRotated);
+          const timeRowEl = isRotated ? timeRowRotated : timeRow;
+          btn.textContent = timeRowEl.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
         }
         last = now;
       };
       return btn;
     }
 
-    function buildHeaders() {
+    function buildHeaders(isRotated = false) {
       const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
+      const groups = isRotated ? allGroupsRotated : allGroups;
+      
       for (let i = 1; i <= totalMinutes; i++) {
         const thL = document.createElement('th'); 
         fragL.appendChild(thL);
@@ -371,17 +511,25 @@
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
           if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
-            allGroups.push(idxs);
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`, isRotated));
+            groups.push(idxs);
           }
         }
       }
-      letterRow.appendChild(fragL);
-      timeRow.appendChild(fragT);
+      
+      if (isRotated) {
+        letterRowRotated.appendChild(fragL);
+        timeRowRotated.appendChild(fragT);
+      } else {
+        letterRow.appendChild(fragL);
+        timeRow.appendChild(fragT);
+      }
     }
 
-    function buildBody() {
+    function buildBody(isRotated = false) {
       const frag = document.createDocumentFragment();
+      const dataCells = isRotated ? allDataCellsRotated : allDataCells;
+      
       for (let lane = 0; lane < 16; lane++) {
         const tr = document.createElement('tr');
         const thLane = document.createElement('th'); 
@@ -396,28 +544,53 @@
           cells.push(td);
         }
         frag.appendChild(tr);
-        allDataCells.push({ header: thCount, cells });
+        dataCells.push({ header: thCount, cells });
       }
-      tableBody.appendChild(frag);
+      
+      if (isRotated) {
+        tableBodyRotated.appendChild(frag);
+      } else {
+        tableBody.appendChild(frag);
+      }
     }
 
-    function clearRows() {
+    function clearRows(isRotated = false) {
       fetchControllers.forEach(controller => controller.abort());
       fetchControllers.clear();
-      overallTotal.textContent = '0ч 0м';
-      allDataCells.forEach(r => {
-        r.header.textContent = '';
-        r.cells.forEach(c => {
-          c.classList.remove('active-cell');
-          c.textContent = '';
-          c.style.color = '';
+      
+      if (isRotated) {
+        overallTotalRotated.textContent = '0ч 0м';
+        allDataCellsRotated.forEach(r => {
+          r.header.textContent = '';
+          r.cells.forEach(c => {
+            c.classList.remove('active-cell');
+            c.textContent = '';
+            c.style.color = '';
+          });
         });
-      });
+      } else {
+        overallTotal.textContent = '0ч 0м';
+        allDataCells.forEach(r => {
+          r.header.textContent = '';
+          r.cells.forEach(c => {
+            c.classList.remove('active-cell');
+            c.textContent = '';
+            c.style.color = '';
+          });
+        });
+      }
     }
 
-    function setStatus(message, isError = false) {
-      statusEl.textContent = message;
-      if (isError) statusEl.classList.add('error'); else statusEl.classList.remove('error');
+    function setStatus(message, isError = false, isRotated = false) {
+      if (isRotated) {
+        statusElRotated.textContent = message;
+        if (isError) statusElRotated.classList.add('error'); 
+        else statusElRotated.classList.remove('error');
+      } else {
+        statusEl.textContent = message;
+        if (isError) statusEl.classList.add('error'); 
+        else statusEl.classList.remove('error');
+      }
     }
 
     async function loadLaneData(idx, selectedDate) {
@@ -433,67 +606,145 @@
       } finally { fetchControllers.delete(idx); }
     }
 
-    async function loadData() {
-      if (!datePicker.value || isLoading) return;
+    function updateUIWithData(data, idx, sumAll, isRotated = false) {
+      const dataCells = isRotated ? allDataCellsRotated : allDataCells;
+      const overallTotalEl = isRotated ? overallTotalRotated : overallTotal;
+      
+      const row = dataCells[idx];
+      let sum = 0;
+      row.cells.forEach((cell, i) => {
+        const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
+        cell.classList.remove('active-cell');
+        if (data.c && data.c.includes(time)) { cell.classList.add('active-cell'); cell.textContent = '🎳'; sum++; }
+        else if (data.b && data.b.includes(time)) { cell.textContent = ''; cell.style.color = 'black'; }
+        else { cell.textContent = '⚡︎'; cell.style.color = '#dc143c'; }
+      });
+      row.header.textContent = formatMinutes(sum);
+      sumAll.value += sum;
+      
+      if (isRotated) {
+        overallTotalRotated.textContent = formatMinutes(sumAll.value);
+      } else {
+        overallTotal.textContent = formatMinutes(sumAll.value);
+      }
+    }
+
+    async function loadData(isRotated = false) {
+      const selectedDate = isRotated ? datePickerRotated.value : datePicker.value;
+      if (!selectedDate || isLoading) return;
+      
       isLoading = true;
-      clearRows();
-      setStatus('Загрузка данных...');
-      const selectedDate = datePicker.value;
-      let done = 0, sumAll = 0;
+      clearRows(isRotated);
+      setStatus('Загрузка данных...', false, isRotated);
+      
+      let done = 0;
+      const sumAll = { value: 0 };
       const errors = [];
       const promises = [];
+      
       try {
-        for (let idx = 0; idx < allDataCells.length; idx++) {
+        for (let idx = 0; idx < (isRotated ? allDataCellsRotated.length : allDataCells.length); idx++) {
           promises.push(
             loadLaneData(idx, selectedDate)
               .then(data => {
-                const row = allDataCells[idx];
-                let sum = 0;
-                row.cells.forEach((cell, i) => {
-                  const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
-                  cell.classList.remove('active-cell');
-                  if (data.c && data.c.includes(time)) { cell.classList.add('active-cell'); cell.textContent = '🎳'; sum++; }
-                  else if (data.b && data.b.includes(time)) { cell.textContent = ''; cell.style.color = 'black'; }
-                  else { cell.textContent = '⚡︎'; cell.style.color = '#dc143c'; }
-                });
-                row.header.textContent = formatMinutes(sum);
-                sumAll += sum;
+                updateUIWithData(data, idx, sumAll, isRotated);
                 done++;
-                setStatus(`Загружено ${done} из 16 дорожек...`);
+                setStatus(`Загружено ${done} из 16 дорожек...`, false, isRotated);
               })
-              .catch(err => { console.error(`Ошибка дорожки ${idx+1}:`, err); errors.push(`Дорожка ${idx+1}: ${err.message}`); done++; })
+              .catch(err => { 
+                console.error(`Ошибка дорожки ${idx+1}:`, err); 
+                errors.push(`Дорожка ${idx+1}: ${err.message}`); 
+                done++; 
+              })
           );
         }
+        
         await Promise.allSettled(promises);
-        overallTotal.textContent = formatMinutes(sumAll);
-        if (errors.length > 0) setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
-        else setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
-      } catch (error) { console.error('Общая ошибка:', error); setStatus(`Ошибка загрузки: ${error.message}`, true); }
-      finally { isLoading = false; }
+        
+        if (errors.length > 0) {
+          setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true, isRotated);
+        } else {
+          setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll.value)}`, false, isRotated);
+        }
+      } catch (error) { 
+        console.error('Общая ошибка:', error); 
+        setStatus(`Ошибка загрузки: ${error.message}`, true, isRotated); 
+      } finally { 
+        isLoading = false; 
+        
+        // Синхронизируем данные между обычным и повернутым режимом
+        if (!isRotated) {
+          datePickerRotated.value = selectedDate;
+          overallTotalRotated.textContent = overallTotal.textContent;
+        } else {
+          datePicker.value = selectedDate;
+          overallTotal.textContent = overallTotalRotated.textContent;
+        }
+      }
     }
 
     function init() {
-      buildHeaders();
-      buildBody();
-      datePicker.addEventListener('change', loadData);
+      // Инициализация обычного режима
+      buildHeaders(false);
+      buildBody(false);
+      
+      // Инициализация повернутого режима
+      buildHeaders(true);
+      buildBody(true);
+      
+      // Обработчики событий для обычного режима
+      datePicker.addEventListener('change', () => loadData(false));
+      document.getElementById('logo-wrapper').addEventListener('click', () => { datePicker.click(); });
+      
+      // Обработчики событий для повернутого режима
+      datePickerRotated.addEventListener('change', () => loadData(true));
+      document.getElementById('logo-wrapper-rotated').addEventListener('click', () => { datePickerRotated.click(); });
+      
+      // Общие обработчики событий
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
-          const td = e.target, ci = td.cellIndex, row = td.parentElement;
+          const td = e.target;
+          const tableId = td.closest('table').id;
+          const isRotated = tableId === 'main-table-rotated';
+          
+          const ci = td.cellIndex;
+          const row = td.parentElement;
+          
+          const selector = isRotated ? '#main-table-rotated' : '#main-table';
+          
           row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
-          document.querySelectorAll('#main-table tbody tr').forEach(r => { const c = r.children[ci]; if (c) c.classList.add('hover-col'); });
-          const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
+          document.querySelectorAll(`${selector} tbody tr`).forEach(r => { 
+            const c = r.children[ci]; 
+            if (c) c.classList.add('hover-col'); 
+          });
+          
+          const th = document.querySelector(`${selector} thead tr:first-child th:nth-child(${ci+1})`);
           if (th) th.classList.add('hover-col');
         }
       });
+      
       document.addEventListener('mouseout', function(e) {
-        if (e.target.tagName === 'TD') document.querySelectorAll('.hover-row, .hover-col').forEach(el => el.classList.remove('hover-row', 'hover-col'));
+        if (e.target.tagName === 'TD') {
+          document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
+            el.classList.remove('hover-row', 'hover-col');
+          });
+        }
       });
+      
+      // Установка текущей даты
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
-      setTimeout(() => toggleAll(true), 100);
-      document.getElementById('logo-wrapper').addEventListener('click', () => { datePicker.click(); });
-      setTimeout(loadData, 500);
+      datePickerRotated.value = iso;
+      
+      // Сворачиваем все группы
+      setTimeout(() => {
+        toggleAll(true, false);
+        toggleAll(true, true);
+      }, 100);
+      
+      // Загрузка данных
+      setTimeout(() => loadData(false), 500);
     }
 
     window.addEventListener('load', init);
