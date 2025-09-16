@@ -10,8 +10,6 @@
       margin: 0;
       padding: 20px;
       color: #333;
-      transition: transform 0.5s ease; /* плавный поворот */
-      transform-origin: top left; /* точка поворота */
     }
 
     .table-wrapper {
@@ -206,24 +204,6 @@
       color: #2e7d32;
     }
 
-    /* Кнопка поворота */
-    #rotate-btn {
-      position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 999;
-      padding: 8px 12px;
-      font-size: 14px;
-      background-color: #1a2f40;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    #rotate-btn:hover {
-      background-color: #dc143c;
-    }
-
     @media (max-width: 768px) {
       body { padding: 10px; }
       .table-wrapper { overflow-x: scroll; }
@@ -239,9 +219,6 @@
   </style>
 </head>
 <body>
-  <!-- Кнопка поворота -->
-  <button id="rotate-btn">Повернуть вправо 90°</button>
-
   <div id="status" class="status-message">Выберите дату для загрузки данных</div>
   
   <div class="table-wrapper">
@@ -265,15 +242,6 @@
   </div>
 
   <script>
-    // --- Кнопка поворота страницы ---
-    const rotateBtn = document.getElementById('rotate-btn');
-    let rotated = false;
-    rotateBtn.addEventListener('click', () => {
-      rotated = !rotated;
-      document.body.style.transform = rotated ? 'rotate(90deg) translateY(-100%)' : 'rotate(0deg)';
-    });
-
-    // --- Остальной ваш скрипт ---
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
     const letterRow = document.getElementById('letter-row'),
@@ -470,17 +438,17 @@
         }
       });
       document.addEventListener('mouseout', function(e) {
-        if (e.target.tagName === 'TD') {
-          const td = e.target, ci = td.cellIndex, row = td.parentElement;
-          row.querySelectorAll('td').forEach(cell => cell.classList.remove('hover-row'));
-          document.querySelectorAll('#main-table tbody tr').forEach(r => { const c = r.children[ci]; if (c) c.classList.remove('hover-col'); });
-          const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
-          if (th) th.classList.remove('hover-col');
-        }
+        if (e.target.tagName === 'TD') document.querySelectorAll('.hover-row, .hover-col').forEach(el => el.classList.remove('hover-row', 'hover-col'));
       });
+      const t = new Date();
+      const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+      datePicker.value = iso;
+      setTimeout(() => toggleAll(true), 100);
+      document.getElementById('logo-wrapper').addEventListener('click', () => { datePicker.click(); });
+      setTimeout(loadData, 500);
     }
 
-    init();
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
