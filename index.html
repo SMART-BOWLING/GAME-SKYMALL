@@ -49,28 +49,27 @@
       font-weight: 600;
     }
 
-    /* Фиксированные первая строка (номера машин) и первый столбец (время) */
-    #main-table tr:nth-child(1) th,
-    #main-table tr:nth-child(2) th {
+    /* Фиксированные первые два столбца */
+    #main-table th:nth-child(1),
+    #main-table td:nth-child(1),
+    #main-table th:nth-child(2),
+    #main-table td:nth-child(2) {
       position: sticky;
-      top: 0;
-      z-index: 3;
     }
-    
     #main-table th:nth-child(1),
     #main-table td:nth-child(1) {
-      position: sticky;
       left: 0;
-      z-index: 2;
+      z-index: 3;
       background-color: #dc143c;
       color: white;
       width: 50px;
       min-width: 50px;
       max-width: 50px;
     }
-
-    /* Стили для номеров машин (верхняя строка) */
-    #lane-numbers th {
+    #main-table th:nth-child(2),
+    #main-table td:nth-child(2) {
+      left: 50px;
+      z-index: 5;
       background-color: #2c3e50;
       color: white;
       width: 120px;
@@ -79,23 +78,40 @@
       overflow: hidden;
     }
 
-    /* Стили для времени (первый столбец) */
-    #time-column th {
-      background-color: #ecf0f1;
-      color: #2c3e50;
-      border: 1px solid #e0e0e0;
+    /* Заголовки первой и второй строки */
+    #letter-row th:nth-child(1),
+    #letter-row th:nth-child(2),
+    #time-row th:nth-child(1),
+    #time-row th:nth-child(2) {
+      background-color: #ecf0f1 !important;
+      color: #2c3e50 !important;
+      border: 0px solid #d7dce3 !important;
+      z-index: 4;
     }
 
-    #time-column th div {
+    #letter-row th:nth-child(n+3) {
+      background-color: #ecf0f1 !important;
+      color: #2c3e50;
+      border: 1px solid #e0e0e0 !important;
+    }
+    #time-row th:nth-child(n+3) {
+      white-space: normal;
+      padding: 4px 2px;
+      line-height: 1;
+      vertical-align: middle;
+      border: 1px solid #e0e0e0;
+      width: auto;
+    }
+    #time-row th div {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    #time-column th .hour {
+    #time-row th .hour {
       font-size: 12px;
       font-weight: bold;
     }
-    #time-column th .minute {
+    #time-row th .minute {
       font-size: 12px;
     }
 
@@ -194,9 +210,10 @@
       table { min-width: 100%; }
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) { width: 40px; min-width: 40px; max-width: 40px; }
-      #lane-numbers th { width: 100px; min-width: 100px; max-width: 100px; }
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) { left: 40px; width: 100px; min-width: 100px; max-width: 100px; }
       td, th { font-size: 12px; height: 25px; }
-      #time-column th .hour, #time-column th .minute { font-size: 10px; }
+      #time-row th .hour, #time-row th .minute { font-size: 10px; }
       .toggle-btn { font-size: 12px; height: 25px; line-height: 22px; }
     }
   </style>
@@ -207,34 +224,28 @@
   <div class="table-wrapper">
     <table id="main-table">
       <thead>
-        <tr id="header-row">
+        <tr id="letter-row">
           <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
             <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:45px;height:45px;border-radius:0;" />
           </th>
-          <th colspan="16" id="overall-total">0ч 0м</th>
-        </tr>
-        <tr id="lane-numbers">
           <th>
             <input type="date" id="date-picker" />
           </th>
-          <!-- Номера машин будут добавлены здесь -->
+        </tr>
+        <tr id="time-row">
+          <th>LANE</th>
+          <th id="overall-total">0ч 0м</th>
         </tr>
       </thead>
-      <tbody id="table-body">
-        <tr id="time-column">
-          <th>ВРЕМЯ</th>
-          <!-- Ячейки времени будут добавлены здесь -->
-        </tr>
-      </tbody>
+      <tbody id="table-body"></tbody>
     </table>
   </div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
-    const headerRow = document.getElementById('header-row'),
-          laneNumbers = document.getElementById('lane-numbers'),
-          timeColumn = document.getElementById('time-column'),
+    const letterRow = document.getElementById('letter-row'),
+          timeRow = document.getElementById('time-row'),
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
@@ -251,17 +262,18 @@
 
     function toggleGroup(idxs) {
       idxs.forEach(i => {
-        // Скрываем/показываем столбцы с данными
-        laneNumbers.children[i+1].classList.toggle('hidden-column');
+        [timeRow, letterRow].forEach(row => {
+          if (row.children[i+2]) row.children[i+2].classList.toggle('hidden-column');
+        });
         tableBody.querySelectorAll('tr').forEach(tr => {
-          if (tr.children[i+1]) tr.children[i+1].classList.toggle('hidden-column');
+          if (tr.children[i+2]) tr.children[i+2].classList.toggle('hidden-column');
         });
       });
     }
 
     function areAllHidden() {
       return allGroups.every(g => {
-        const el = laneNumbers.children[g[0]+1];
+        const el = timeRow.children[g[0]+2];
         return el && el.classList.contains('hidden-column');
       });
     }
@@ -269,7 +281,7 @@
     function toggleAll(forceHide=null) {
       const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
       allGroups.forEach(g => {
-        const el = laneNumbers.children[g[0]+1];
+        const el = timeRow.children[g[0]+2];
         if (el) {
           const hidden = el.classList.contains('hidden-column');
           if (hidden !== shouldHide) toggleGroup(g);
@@ -289,7 +301,7 @@
         if (now - last < 300) toggleAll(!areAllHidden());
         else {
           toggleGroup(idxs);
-          btn.textContent = laneNumbers.children[idxs[0]+1].classList.contains('hidden-column') ? '+' : '–';
+          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
         }
         last = now;
       };
@@ -297,53 +309,46 @@
     }
 
     function buildHeaders() {
-      // Создаем ячейки для номеров машин (дорожек)
-      const fragLanes = document.createDocumentFragment();
-      for (let i = 1; i <= 16; i++) {
-        const th = document.createElement('th'); 
-        th.textContent = i;
-        fragLanes.appendChild(th);
-      }
-      laneNumbers.appendChild(fragLanes);
-      
-      // Создаем ячейки для времени (первый столбец)
-      const fragTime = document.createDocumentFragment();
+      const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
       for (let i = 1; i <= totalMinutes; i++) {
+        const thL = document.createElement('th'); 
+        fragL.appendChild(thL);
         const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
-        const th = document.createElement('th');
-        th.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
-        fragTime.appendChild(th);
-        
+        const thT = document.createElement('th');
+        thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
+        fragT.appendChild(thT);
         if ((h*60 + m) % groupInterval === 0) {
           const start = (h*60 + m) === 0 ? 1 : (h*60 + m) + 1;
           const end = Math.min(start + groupSize - 1, totalMinutes - 1);
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
           if (idxs.length) {
-            fragTime.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
             allGroups.push(idxs);
           }
         }
       }
-      timeColumn.appendChild(fragTime);
+      letterRow.appendChild(fragL);
+      timeRow.appendChild(fragT);
     }
 
     function buildBody() {
       const frag = document.createDocumentFragment();
-      // Создаем строки для каждой минуты
-      for (let minute = 0; minute < totalMinutes; minute++) {
+      for (let lane = 0; lane < 16; lane++) {
         const tr = document.createElement('tr');
-        
-        // Первая ячейка - время (уже создана в buildHeaders)
-        // Остальные ячейки - данные для каждой дорожки
+        const thLane = document.createElement('th'); 
+        thLane.textContent = lane + 1; 
+        tr.appendChild(thLane);
+        const thCount = document.createElement('th'); 
+        tr.appendChild(thCount);
         const cells = [];
-        for (let lane = 0; lane < 16; lane++) {
+        for (let i = 0; i < totalMinutes; i++) {
           const td = document.createElement('td');
           tr.appendChild(td);
           cells.push(td);
         }
         frag.appendChild(tr);
-        allDataCells.push(cells);
+        allDataCells.push({ header: thCount, cells });
       }
       tableBody.appendChild(frag);
     }
@@ -352,11 +357,12 @@
       fetchControllers.forEach(controller => controller.abort());
       fetchControllers.clear();
       overallTotal.textContent = '0ч 0м';
-      allDataCells.forEach(row => {
-        row.forEach(cell => {
-          cell.classList.remove('active-cell');
-          cell.textContent = '';
-          cell.style.color = '';
+      allDataCells.forEach(r => {
+        r.header.textContent = '';
+        r.cells.forEach(c => {
+          c.classList.remove('active-cell');
+          c.textContent = '';
+          c.style.color = '';
         });
       });
     }
@@ -389,57 +395,32 @@
       const errors = [];
       const promises = [];
       try {
-        for (let idx = 0; idx < 16; idx++) {
+        for (let idx = 0; idx < allDataCells.length; idx++) {
           promises.push(
             loadLaneData(idx, selectedDate)
               .then(data => {
+                const row = allDataCells[idx];
                 let sum = 0;
-                // Обрабатываем данные для каждой минуты
-                for (let minute = 0; minute < totalMinutes; minute++) {
-                  const time = `${String(Math.floor(minute/60)).padStart(2,'0')}:${String(minute%60).padStart(2,'0')}`;
-                  const cell = allDataCells[minute][idx];
+                row.cells.forEach((cell, i) => {
+                  const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
                   cell.classList.remove('active-cell');
-                  
-                  if (data.c && data.c.includes(time)) { 
-                    cell.classList.add('active-cell'); 
-                    cell.textContent = '🎳'; 
-                    sum++; 
-                  }
-                  else if (data.b && data.b.includes(time)) { 
-                    cell.textContent = ''; 
-                    cell.style.color = 'black'; 
-                  }
-                  else { 
-                    cell.textContent = '⚡︎'; 
-                    cell.style.color = '#dc143c'; 
-                  }
-                }
-                
-                // Обновляем общую статистику для дорожки
-                const laneHeader = laneNumbers.children[idx+1];
-                if (laneHeader) {
-                  laneHeader.innerHTML = `${idx+1}<br><small>${formatMinutes(sum)}</small>`;
-                }
-                
+                  if (data.c && data.c.includes(time)) { cell.classList.add('active-cell'); cell.textContent = '🎳'; sum++; }
+                  else if (data.b && data.b.includes(time)) { cell.textContent = ''; cell.style.color = 'black'; }
+                  else { cell.textContent = '⚡︎'; cell.style.color = '#dc143c'; }
+                });
+                row.header.textContent = formatMinutes(sum);
                 sumAll += sum;
                 done++;
                 setStatus(`Загружено ${done} из 16 дорожек...`);
               })
-              .catch(err => { 
-                console.error(`Ошибка дорожки ${idx+1}:`, err); 
-                errors.push(`Дорожка ${idx+1}: ${err.message}`); 
-                done++; 
-              })
+              .catch(err => { console.error(`Ошибка дорожки ${idx+1}:`, err); errors.push(`Дорожка ${idx+1}: ${err.message}`); done++; })
           );
         }
         await Promise.allSettled(promises);
         overallTotal.textContent = formatMinutes(sumAll);
         if (errors.length > 0) setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
         else setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
-      } catch (error) { 
-        console.error('Общая ошибка:', error); 
-        setStatus(`Ошибка загрузки: ${error.message}`, true); 
-      }
+      } catch (error) { console.error('Общая ошибка:', error); setStatus(`Ошибка загрузки: ${error.message}`, true); }
       finally { isLoading = false; }
     }
 
@@ -447,24 +428,18 @@
       buildHeaders();
       buildBody();
       datePicker.addEventListener('change', loadData);
-      
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
           const td = e.target, ci = td.cellIndex, row = td.parentElement;
           row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
-          document.querySelectorAll('#main-table tbody tr').forEach(r => { 
-            const c = r.children[ci]; 
-            if (c) c.classList.add('hover-col'); 
-          });
-          const th = document.querySelector(`#lane-numbers th:nth-child(${ci+1})`);
+          document.querySelectorAll('#main-table tbody tr').forEach(r => { const c = r.children[ci]; if (c) c.classList.add('hover-col'); });
+          const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
           if (th) th.classList.add('hover-col');
         }
       });
-      
       document.addEventListener('mouseout', function(e) {
         if (e.target.tagName === 'TD') document.querySelectorAll('.hover-row, .hover-col').forEach(el => el.classList.remove('hover-row', 'hover-col'));
       });
-      
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
