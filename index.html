@@ -23,7 +23,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 5px;
+      padding: 3px;
       color: #333;
       width: 100%;
       height: 100%;
@@ -44,30 +44,32 @@
       max-width: 100%;
       margin: 0 auto;
       border: 1px solid #d7dce3;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       height: 100%;
+      background: white;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
-      table-layout: auto;
+      table-layout: fixed;
       background-color: white;
       min-width: 800px;
     }
 
     td, th {
-      height: 18px;
+      height: 16px;
       text-align: center;
-      font-size: 10px;
-      border: 1px solid #d7dce3;
+      font-size: 9px;
+      border: 0.5px solid #e0e0e0;
       box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
-      padding: 0 1px;
+      padding: 0;
+      overflow: hidden;
     }
 
     th {
@@ -89,21 +91,23 @@
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 30px;
-      min-width: 30px;
-      max-width: 30px;
+      width: 25px;
+      min-width: 25px;
+      max-width: 25px;
+      font-weight: bold;
     }
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 30px;
+      left: 25px;
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 60px;
-      min-width: 60px;
-      max-width: 60px;
+      width: 45px;
+      min-width: 45px;
+      max-width: 45px;
       overflow: hidden;
-      font-size: 9px;
+      font-size: 8px;
+      font-weight: bold;
     }
 
     /* Заголовки первой и второй строки */
@@ -120,35 +124,44 @@
     #letter-row th:nth-child(n+3) {
       background-color: #ecf0f1 !important;
       color: #2c3e50;
-      border: 1px solid #e0e0e0 !important;
+      border: 0.5px solid #e0e0e0 !important;
+      width: 12px;
+      min-width: 12px;
+      max-width: 12px;
     }
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 1px;
+      padding: 0;
       line-height: 1;
       vertical-align: middle;
-      border: 1px solid #e0e0e0;
-      width: auto;
+      border: 0.5px solid #e0e0e0;
+      width: 12px;
+      min-width: 12px;
+      max-width: 12px;
     }
     #time-row th div {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      height: 100%;
     }
     #time-row th .hour {
-      font-size: 8px;
+      font-size: 7px;
       font-weight: bold;
+      line-height: 8px;
     }
     #time-row th .minute {
-      font-size: 8px;
+      font-size: 6px;
+      line-height: 7px;
     }
 
     .hidden-column {
       display: none !important;
     }
     .active-cell {
-      background-color: #2c3e50;
-      color: #fff;
+      background-color: #2c3e50 !important;
+      color: #fff !important;
       font-weight: 700;
     }
     td.hover-row, th.hover-row,
@@ -158,11 +171,11 @@
 
     #date-picker {
       width: 100%;
-      padding: 2px;
-      font-size: 9px;
+      padding: 1px 2px;
+      font-size: 8px;
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 4px;
+      border-radius: 3px;
       background-color: #ecf0f1;
       color: #1a2f40;
       box-sizing: border-box;
@@ -170,6 +183,8 @@
       -webkit-appearance: none;
       appearance: none;
       outline: none;
+      height: 14px;
+      line-height: 12px;
     }
     #date-picker:hover {
       background-color: #e0e0e0;
@@ -177,6 +192,9 @@
     #date-picker::-webkit-calendar-picker-indicator {
       filter: invert(0.3);
       cursor: pointer;
+      width: 10px;
+      height: 10px;
+      padding: 0;
     }
 
     /* Кнопки группировки */
@@ -185,95 +203,101 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 2px;
+      border-radius: 1px;
       font-weight: bold;
-      font-size: 8px;
-      line-height: 12px;
-      padding: 0 2px;
+      font-size: 6px;
+      line-height: 8px;
+      padding: 0 1px;
       display: inline-block;
-      width: 6px;
-      height: 14px;
+      width: 5px;
+      height: 10px;
       text-align: center;
       transition: background-color 0.1s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     .toggle-btn:hover {
       background-color: #dc143c;
     }
 
     .logo-cell img {
-      width: 25px !important;
-      height: 25px !important;
+      width: 20px !important;
+      height: 20px !important;
+      display: block;
+      margin: 0 auto;
     }
 
-    /* Кнопки для изменения высоты строк */
-    .zoom-controls {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      z-index: 1000;
-      display: flex;
-      gap: 5px;
+    /* Улучшенная подсветка */
+    #main-table tr:hover td:not(:nth-child(1)):not(:nth-child(2)),
+    #main-table tr:hover th:not(:nth-child(1)):not(:nth-child(2)) {
+      background-color: #f8f9fa;
     }
 
-    .zoom-btn {
-      width: 30px;
-      height: 30px;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    /* Статус сообщение */
+    .status-message {
+      display: none;
+      text-align: center;
+      padding: 4px;
+      margin: 2px 0;
+      border-radius: 3px;
+      background-color: #f8f9fa;
+      font-size: 8px;
     }
 
-    .zoom-btn:hover {
-      background: #dc143c;
-    }
-
-    /* Адаптация для повернутого экрана */
-    @media (max-width: 768px) {
+    /* Адаптация для разных размеров экрана */
+    @media (max-height: 600px) {
       td, th {
-        height: 16px;
-        font-size: 9px;
+        height: 14px;
+        font-size: 8px;
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) {
-        width: 25px;
-        min-width: 25px;
-        max-width: 25px;
+        width: 22px;
+        min-width: 22px;
+        max-width: 22px;
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
-        left: 25px;
-        width: 50px;
-        min-width: 50px;
-        max-width: 50px;
-        font-size: 8px;
+        left: 22px;
+        width: 40px;
+        min-width: 40px;
+        max-width: 40px;
+        font-size: 7px;
       }
       
-      #time-row th .hour,
+      #time-row th .hour {
+        font-size: 6px;
+        line-height: 7px;
+      }
+      
       #time-row th .minute {
+        font-size: 5px;
+        line-height: 6px;
+      }
+      
+      #date-picker {
+        height: 12px;
         font-size: 7px;
       }
       
-      .toggle-btn {
-        font-size: 7px;
-        height: 12px;
-        line-height: 10px;
+      .logo-cell img {
+        width: 18px !important;
+        height: 18px !important;
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-height: 500px) {
       td, th {
-        height: 14px;
-        font-size: 8px;
+        height: 12px;
+        font-size: 7px;
+      }
+      
+      body {
+        padding: 2px;
       }
       
       #main-table th:nth-child(1),
@@ -286,10 +310,86 @@
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) {
         left: 20px;
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
+        width: 35px;
+        min-width: 35px;
+        max-width: 35px;
+        font-size: 6px;
       }
+      
+      #letter-row th:nth-child(n+3),
+      #time-row th:nth-child(n+3) {
+        width: 10px;
+        min-width: 10px;
+        max-width: 10px;
+      }
+      
+      #time-row th .hour {
+        font-size: 5px;
+      }
+      
+      #time-row th .minute {
+        font-size: 4px;
+      }
+      
+      .toggle-btn {
+        font-size: 5px;
+        height: 8px;
+        line-height: 6px;
+      }
+    }
+
+    /* Для очень широких экранов */
+    @media (min-height: 800px) {
+      td, th {
+        height: 18px;
+        font-size: 10px;
+      }
+      
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) {
+        width: 28px;
+      }
+      
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) {
+        left: 28px;
+        width: 50px;
+        font-size: 9px;
+      }
+      
+      #date-picker {
+        height: 16px;
+        font-size: 9px;
+      }
+    }
+
+    /* Улучшения для touch устройств */
+    @media (hover: none) {
+      .toggle-btn {
+        width: 8px;
+        height: 12px;
+        font-size: 7px;
+      }
+      
+      #date-picker {
+        padding: 2px 3px;
+      }
+    }
+
+    /* Оптимизация производительности */
+    #main-table {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    /* Улучшенная читаемость активных ячеек */
+    .active-cell {
+      box-shadow: inset 0 0 0 1px #fff;
+    }
+
+    /* Градиент для заголовков времени */
+    #time-row th:nth-child(n+3) {
+      background: linear-gradient(135deg, #ecf0f1 0%, #dfe6e9 100%);
     }
   </style>
 </head>
@@ -318,12 +418,6 @@
     </div>
   </div>
 
-  <!-- Кнопки управления высотой строк -->
-  <div class="zoom-controls">
-    <button class="zoom-btn" id="zoom-out">-</button>
-    <button class="zoom-btn" id="zoom-in">+</button>
-  </div>
-
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
@@ -336,28 +430,6 @@
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
-
-    // Переменные для управления высотой строк
-    let rowHeight = 18;
-    const minHeight = 12;
-    const maxHeight = 30;
-    const heightStep = 2;
-
-    function updateRowHeight() {
-      const allCells = document.querySelectorAll('#main-table td, #main-table th');
-      allCells.forEach(cell => {
-        cell.style.height = `${rowHeight}px`;
-        cell.style.fontSize = `${Math.max(8, rowHeight - 8)}px`;
-      });
-      
-      // Обновляем размер кнопок группировки
-      const toggleBtns = document.querySelectorAll('.toggle-btn');
-      toggleBtns.forEach(btn => {
-        btn.style.height = `${rowHeight - 4}px`;
-        btn.style.lineHeight = `${rowHeight - 6}px`;
-        btn.style.fontSize = `${Math.max(6, rowHeight - 12)}px`;
-      });
-    }
 
     function formatMinutes(mins) {
       const h = Math.floor(mins / 60);
@@ -401,7 +473,8 @@
       btn.title = title;
       btn.textContent = '+';
       let last = 0;
-      btn.onclick = () => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
         const now = Date.now();
         if (now - last < 300) toggleAll(!areAllHidden());
         else {
@@ -417,6 +490,7 @@
       const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
       for (let i = 1; i <= totalMinutes; i++) {
         const thL = document.createElement('th'); 
+        thL.style.position = 'relative';
         fragL.appendChild(thL);
         const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
         const thT = document.createElement('th');
@@ -428,7 +502,7 @@
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
           if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            thL.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
             allGroups.push(idxs);
           }
         }
@@ -449,6 +523,9 @@
         const cells = [];
         for (let i = 0; i < totalMinutes; i++) {
           const td = document.createElement('td');
+          td.style.width = '12px';
+          td.style.minWidth = '12px';
+          td.style.maxWidth = '12px';
           tr.appendChild(td);
           cells.push(td);
         }
@@ -556,22 +633,7 @@
       buildBody();
       datePicker.addEventListener('change', loadData);
       
-      // Обработчики для изменения высоты строк
-      document.getElementById('zoom-in').addEventListener('click', () => {
-        if (rowHeight < maxHeight) {
-          rowHeight += heightStep;
-          updateRowHeight();
-        }
-      });
-      
-      document.getElementById('zoom-out').addEventListener('click', () => {
-        if (rowHeight > minHeight) {
-          rowHeight -= heightStep;
-          updateRowHeight();
-        }
-      });
-      
-      // Добавляем обработчики для подсветки строк и столбцов
+      // Улучшенная подсветка строк и столбцов
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
           const cell = e.target;
@@ -579,14 +641,22 @@
           const row = cell.parentElement;
           
           if (row && row.tagName === 'TR') {
-            row.querySelectorAll('td, th').forEach(c => c.classList.add('hover-row'));
+            const cells = row.querySelectorAll('td, th');
+            for (let c of cells) {
+              if (!c.classList.contains('active-cell')) {
+                c.classList.add('hover-row');
+              }
+            }
           }
           
           if (ci >= 0) {
-            document.querySelectorAll(`#main-table tr`).forEach(r => {
+            const rows = document.querySelectorAll(`#main-table tr`);
+            for (let r of rows) {
               const c = r.children[ci];
-              if (c) c.classList.add('hover-col');
-            });
+              if (c && !c.classList.contains('active-cell')) {
+                c.classList.add('hover-col');
+              }
+            }
           }
         }
       });
@@ -609,14 +679,11 @@
       
       // Обработчик клика по логотипу
       document.getElementById('logo-wrapper').addEventListener('click', () => { 
-        datePicker.click(); 
+        datePicker.showPicker ? datePicker.showPicker() : datePicker.click();
       });
       
       // Загрузка данных
       setTimeout(loadData, 500);
-      
-      // Инициализируем высоту строк
-      updateRowHeight();
     }
 
     window.addEventListener('load', init);
