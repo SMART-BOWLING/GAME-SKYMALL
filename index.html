@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -219,8 +219,8 @@
   </style>
 </head>
 <body>
-  <div id="status" class="status-message">Выберите дату для загрузки данных</div>
-  
+  <!-- УБРАНА ВЕРХНЯЯ СТАТУСНО-ИНФОРМАЦИОННАЯ ПАНЕЛЬ (по запросу) -->
+
   <div class="table-wrapper">
     <table id="main-table">
       <thead>
@@ -243,13 +243,17 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
-    const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
+    const totalMinutes = 1440;
+    const groupInterval = 15;
+    const groupSize = groupInterval; // лучше, чтобы размер группы соответствовал интервалу
     const letterRow = document.getElementById('letter-row'),
           timeRow = document.getElementById('time-row'),
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
-          datePicker = document.getElementById('date-picker'),
-          statusEl = document.getElementById('status');
+          datePicker = document.getElementById('date-picker');
+    // статусного элемента сверху больше нет, так что получаем, но возможен null
+    const statusEl = document.getElementById('status');
+
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
@@ -260,28 +264,40 @@
       return `${h}ч ${m}м`;
     }
 
+    function setStatus(message, isError = false) {
+      // если нет элемента статуса — логируем в консоль, иначе показываем
+      if (statusEl) {
+        statusEl.textContent = message;
+        if (isError) statusEl.classList.add('error'); else statusEl.classList.remove('error');
+      } else {
+        console.log('STATUS:', message, isError ? '(ERROR)' : '');
+      }
+    }
+
     function toggleGroup(idxs) {
       idxs.forEach(i => {
         [timeRow, letterRow].forEach(row => {
-          if (row.children[i+2]) row.children[i+2].classList.toggle('hidden-column');
+          const colIndex = i + 3; // because row has 2 initial ths -> children start from index 0,1 => we appended from child index 2, but nth-child uses 1-based, however childIndex uses 0 based. To be safe we use children[col] below.
+          // simpler: use children[i+2] because we appended ths after first two
+          if (row.children[i + 2]) row.children[i + 2].classList.toggle('hidden-column');
         });
         tableBody.querySelectorAll('tr').forEach(tr => {
-          if (tr.children[i+2]) tr.children[i+2].classList.toggle('hidden-column');
+          if (tr.children[i + 2]) tr.children[i + 2].classList.toggle('hidden-column');
         });
       });
     }
 
     function areAllHidden() {
       return allGroups.every(g => {
-        const el = timeRow.children[g[0]+2];
+        const el = timeRow.children[g[0] + 2];
         return el && el.classList.contains('hidden-column');
       });
     }
 
-    function toggleAll(forceHide=null) {
+    function toggleAll(forceHide = null) {
       const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
       allGroups.forEach(g => {
-        const el = timeRow.children[g[0]+2];
+        const el = timeRow.children[g[0] + 2];
         if (el) {
           const hidden = el.classList.contains('hidden-column');
           if (hidden !== shouldHide) toggleGroup(g);
@@ -301,7 +317,7 @@
         if (now - last < 300) toggleAll(!areAllHidden());
         else {
           toggleGroup(idxs);
-          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
+          btn.textContent = timeRow.children[idxs[0] + 2].classList.contains('hidden-column') ? '+' : '–';
         }
         last = now;
       };
@@ -310,20 +326,25 @@
 
     function buildHeaders() {
       const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
-      for (let i = 1; i <= totalMinutes; i++) {
-        const thL = document.createElement('th'); 
+      // строим заголовки для минут 0..totalMinutes-1 (0-based)
+      for (let i = 0; i < totalMinutes; i++) {
+        const thL = document.createElement('th');
         fragL.appendChild(thL);
-        const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
+
+        const h = Math.floor(i / 60), m = i % 60;
         const thT = document.createElement('th');
         thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
         fragT.appendChild(thT);
-        if ((h*60 + m) % groupInterval === 0) {
-          const start = (h*60 + m) === 0 ? 1 : (h*60 + m) + 1;
+
+        // группируем каждые groupInterval минут
+        if (i % groupInterval === 0) {
+          const start = i;
           const end = Math.min(start + groupSize - 1, totalMinutes - 1);
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
           if (idxs.length) {
-            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            // вставляем кнопку внутрь текущего thL
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length - 1])}`));
             allGroups.push(idxs);
           }
         }
@@ -336,11 +357,13 @@
       const frag = document.createDocumentFragment();
       for (let lane = 0; lane < 16; lane++) {
         const tr = document.createElement('tr');
-        const thLane = document.createElement('th'); 
-        thLane.textContent = lane + 1; 
+        const thLane = document.createElement('th');
+        thLane.textContent = lane + 1;
         tr.appendChild(thLane);
-        const thCount = document.createElement('th'); 
+
+        const thCount = document.createElement('th');
         tr.appendChild(thCount);
+
         const cells = [];
         for (let i = 0; i < totalMinutes; i++) {
           const td = document.createElement('td');
@@ -354,7 +377,10 @@
     }
 
     function clearRows() {
-      fetchControllers.forEach(controller => controller.abort());
+      // abort ongoing fetches
+      fetchControllers.forEach(controller => {
+        try { controller.abort(); } catch (e) { /* ignore */ }
+      });
       fetchControllers.clear();
       overallTotal.textContent = '0ч 0м';
       allDataCells.forEach(r => {
@@ -367,11 +393,6 @@
       });
     }
 
-    function setStatus(message, isError = false) {
-      statusEl.textContent = message;
-      if (isError) statusEl.classList.add('error'); else statusEl.classList.remove('error');
-    }
-
     async function loadLaneData(idx, selectedDate) {
       const controller = new AbortController();
       fetchControllers.set(idx, controller);
@@ -382,7 +403,9 @@
         const data = await response.json();
         if (data.error) throw new Error(data.error);
         return data;
-      } finally { fetchControllers.delete(idx); }
+      } finally {
+        fetchControllers.delete(idx);
+      }
     }
 
     async function loadData() {
@@ -404,47 +427,78 @@
                 row.cells.forEach((cell, i) => {
                   const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
                   cell.classList.remove('active-cell');
-                  if (data.c && data.c.includes(time)) { cell.classList.add('active-cell'); cell.textContent = '🎳'; sum++; }
-                  else if (data.b && data.b.includes(time)) { cell.textContent = ''; cell.style.color = 'black'; }
-                  else { cell.textContent = '⚡︎'; cell.style.color = '#dc143c'; }
+                  // если сервер отдает список строк вида "HH:MM" в data.c / data.b
+                  if (data.c && data.c.includes(time)) {
+                    cell.classList.add('active-cell');
+                    cell.textContent = '🎳';
+                    sum++;
+                  } else if (data.b && data.b.includes(time)) {
+                    cell.textContent = '';
+                    cell.style.color = 'black';
+                  } else {
+                    cell.textContent = '⚡︎';
+                    cell.style.color = '#dc143c';
+                  }
                 });
                 row.header.textContent = formatMinutes(sum);
                 sumAll += sum;
                 done++;
-                setStatus(`Загружено ${done} из 16 дорожек...`);
+                setStatus(`Загружено ${done} из ${allDataCells.length} дорожек...`);
               })
-              .catch(err => { console.error(`Ошибка дорожки ${idx+1}:`, err); errors.push(`Дорожка ${idx+1}: ${err.message}`); done++; })
+              .catch(err => {
+                console.error(`Ошибка дорожки ${idx+1}:`, err);
+                errors.push(`Дорожка ${idx+1}: ${err.message}`);
+                done++;
+              })
           );
         }
         await Promise.allSettled(promises);
         overallTotal.textContent = formatMinutes(sumAll);
         if (errors.length > 0) setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
         else setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
-      } catch (error) { console.error('Общая ошибка:', error); setStatus(`Ошибка загрузки: ${error.message}`, true); }
-      finally { isLoading = false; }
+      } catch (error) {
+        console.error('Общая ошибка:', error);
+        setStatus(`Ошибка загрузки: ${error.message}`, true);
+      } finally {
+        isLoading = false;
+      }
     }
 
     function init() {
       buildHeaders();
       buildBody();
+
       datePicker.addEventListener('change', loadData);
+
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD') {
           const td = e.target, ci = td.cellIndex, row = td.parentElement;
+          // выделяем всю строку
           row.querySelectorAll('td').forEach(cell => cell.classList.add('hover-row'));
-          document.querySelectorAll('#main-table tbody tr').forEach(r => { const c = r.children[ci]; if (c) c.classList.add('hover-col'); });
+          // выделяем столбцы по индексу
+          document.querySelectorAll('#main-table tbody tr').forEach(r => {
+            const c = r.children[ci];
+            if (c) c.classList.add('hover-col');
+          });
           const th = document.querySelector(`#letter-row th:nth-child(${ci+1})`);
           if (th) th.classList.add('hover-col');
         }
       });
+
       document.addEventListener('mouseout', function(e) {
         if (e.target.tagName === 'TD') document.querySelectorAll('.hover-row, .hover-col').forEach(el => el.classList.remove('hover-row', 'hover-col'));
       });
+
       const t = new Date();
       const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
       datePicker.value = iso;
+
+      // все группы по-умолчанию свернуты
       setTimeout(() => toggleAll(true), 100);
+
       document.getElementById('logo-wrapper').addEventListener('click', () => { datePicker.click(); });
+
+      // автозагрузка один раз после init
       setTimeout(loadData, 500);
     }
 
