@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ */
+    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ С УМЕНЬШЕНИЕМ МАСШТАБА */
     html {
-      transform: rotate(90deg);
+      transform: rotate(90deg) scale(0.7);
       transform-origin: center center;
       width: 100vh;
       height: 100vw;
@@ -232,9 +232,40 @@
       color: #2e7d32;
     }
 
+    /* Кнопки для изменения масштаба */
+    .zoom-controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+    }
+
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .zoom-btn:hover {
+      background: #dc143c;
+    }
+
     /* Адаптация для повернутого экрана */
     @media (max-width: 768px) {
       html {
+        transform: rotate(90deg) scale(0.6);
         width: 100vh;
         height: 100vw;
         margin-top: -50vw;
@@ -301,6 +332,7 @@
 
     @media (max-width: 480px) {
       html {
+        transform: rotate(90deg) scale(0.5);
         width: 100vh;
         height: 100vw;
         margin-top: -50vw;
@@ -365,6 +397,12 @@
     </div>
   </div>
 
+  <!-- Кнопки управления масштабом -->
+  <div class="zoom-controls">
+    <button class="zoom-btn" id="zoom-out">-</button>
+    <button class="zoom-btn" id="zoom-in">+</button>
+  </div>
+
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
     const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
@@ -377,6 +415,16 @@
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
+
+    // Переменные для управления масштабом
+    let currentScale = 0.7;
+    const minScale = 0.4;
+    const maxScale = 1.0;
+    const scaleStep = 0.1;
+
+    function updateScale() {
+      document.documentElement.style.transform = `rotate(90deg) scale(${currentScale})`;
+    }
 
     function formatMinutes(mins) {
       const h = Math.floor(mins / 60);
@@ -575,6 +623,21 @@
       buildHeaders();
       buildBody();
       datePicker.addEventListener('change', loadData);
+      
+      // Обработчики для масштабирования
+      document.getElementById('zoom-in').addEventListener('click', () => {
+        if (currentScale < maxScale) {
+          currentScale += scaleStep;
+          updateScale();
+        }
+      });
+      
+      document.getElementById('zoom-out').addEventListener('click', () => {
+        if (currentScale > minScale) {
+          currentScale -= scaleStep;
+          updateScale();
+        }
+      });
       
       // Добавляем обработчики для подсветки строк и столбцов
       document.addEventListener('mouseover', function(e) {
