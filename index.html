@@ -23,7 +23,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
       margin: 0;
-      padding: 3px;
+      padding: 10px;
       color: #333;
       width: 100%;
       height: 100%;
@@ -38,16 +38,15 @@
 
     .table-wrapper {
       overflow-x: auto;
-      overflow-y: hidden;
+      overflow-y: visible;
       position: relative;
       -webkit-overflow-scrolling: touch;
       max-width: 100%;
       margin: 0 auto;
       border: 1px solid #d7dce3;
-      border-radius: 6px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      height: 100%;
-      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      height: calc(100% - 50px);
     }
 
     table {
@@ -55,21 +54,20 @@
       width: 100%;
       table-layout: fixed;
       background-color: white;
-      min-width: 800px;
+      min-width: 600px;
     }
 
     td, th {
-      height: 16px;
+      height: 20px;
       text-align: center;
-      font-size: 9px;
-      border: 0.5px solid #e0e0e0;
+      font-size: 10px;
+      border: 1px solid #d7dce3;
       box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
-      padding: 0;
-      overflow: hidden;
+      padding: 0 2px;
     }
 
     th {
@@ -91,23 +89,20 @@
       z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 25px;
-      min-width: 25px;
-      max-width: 25px;
-      font-weight: bold;
+      width: 35px;
+      min-width: 35px;
+      max-width: 35px;
     }
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 25px;
+      left: 35px;
       z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 45px;
-      min-width: 45px;
-      max-width: 45px;
+      width: 70px;
+      min-width: 70px;
+      max-width: 70px;
       overflow: hidden;
-      font-size: 8px;
-      font-weight: bold;
     }
 
     /* Заголовки первой и второй строки */
@@ -124,44 +119,40 @@
     #letter-row th:nth-child(n+3) {
       background-color: #ecf0f1 !important;
       color: #2c3e50;
-      border: 0.5px solid #e0e0e0 !important;
-      width: 12px;
-      min-width: 12px;
-      max-width: 12px;
+      border: 1px solid #e0e0e0 !important;
+      width: 20px;
+      min-width: 20px;
+      max-width: 20px;
     }
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 0;
+      padding: 2px 1px;
       line-height: 1;
       vertical-align: middle;
-      border: 0.5px solid #e0e0e0;
-      width: 12px;
-      min-width: 12px;
-      max-width: 12px;
+      border: 1px solid #e0e0e0;
+      width: 20px;
+      min-width: 20px;
+      max-width: 20px;
     }
     #time-row th div {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100%;
     }
     #time-row th .hour {
-      font-size: 7px;
+      font-size: 9px;
       font-weight: bold;
-      line-height: 8px;
     }
     #time-row th .minute {
-      font-size: 6px;
-      line-height: 7px;
+      font-size: 9px;
     }
 
     .hidden-column {
       display: none !important;
     }
     .active-cell {
-      background-color: #2c3e50 !important;
-      color: #fff !important;
+      background-color: #2c3e50;
+      color: #fff;
       font-weight: 700;
     }
     td.hover-row, th.hover-row,
@@ -171,11 +162,11 @@
 
     #date-picker {
       width: 100%;
-      padding: 1px 2px;
-      font-size: 8px;
+      padding: 6px;
+      font-size: 11px;
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 3px;
+      border-radius: 6px;
       background-color: #ecf0f1;
       color: #1a2f40;
       box-sizing: border-box;
@@ -183,8 +174,6 @@
       -webkit-appearance: none;
       appearance: none;
       outline: none;
-      height: 14px;
-      line-height: 12px;
     }
     #date-picker:hover {
       background-color: #e0e0e0;
@@ -192,9 +181,6 @@
     #date-picker::-webkit-calendar-picker-indicator {
       filter: invert(0.3);
       cursor: pointer;
-      width: 10px;
-      height: 10px;
-      padding: 0;
     }
 
     /* Кнопки группировки */
@@ -203,193 +189,159 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 1px;
+      border-radius: 3px;
       font-weight: bold;
-      font-size: 6px;
-      line-height: 8px;
-      padding: 0 1px;
+      font-size: 10px;
+      line-height: 18px;
+      padding: 0 4px;
       display: inline-block;
-      width: 5px;
-      height: 10px;
+      width: 8px;
+      height: 20px;
       text-align: center;
       transition: background-color 0.1s ease;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
     }
     .toggle-btn:hover {
       background-color: #dc143c;
     }
 
-    .logo-cell img {
-      width: 20px !important;
-      height: 20px !important;
-      display: block;
-      margin: 0 auto;
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
     }
 
-    /* Улучшенная подсветка */
-    #main-table tr:hover td:not(:nth-child(1)):not(:nth-child(2)),
-    #main-table tr:hover th:not(:nth-child(1)):not(:nth-child(2)) {
-      background-color: #f8f9fa;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    /* Статус сообщение */
     .status-message {
       display: none;
       text-align: center;
-      padding: 4px;
-      margin: 2px 0;
-      border-radius: 3px;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 4px;
       background-color: #f8f9fa;
-      font-size: 8px;
+      font-size: 12px;
     }
 
-    /* Адаптация для разных размеров экрана */
-    @media (max-height: 600px) {
-      td, th {
-        height: 14px;
-        font-size: 8px;
+    .error {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+
+    /* Адаптация для повернутого экрана */
+    @media (max-width: 768px) {
+      html {
+        width: 100vh;
+        height: 100vw;
+        margin-top: -50vw;
+        margin-left: -50vh;
+      }
+      
+      body { 
+        padding: 8px; 
+        font-size: 12px;
+      }
+      
+      .table-wrapper { 
+        overflow-x: scroll; 
+        border-radius: 6px;
+        height: calc(100% - 45px);
+      }
+      
+      table { 
+        min-width: 100%; 
       }
       
       #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 22px;
-        min-width: 22px;
-        max-width: 22px;
+      #main-table td:nth-child(1) { 
+        width: 30px; 
+        min-width: 30px; 
+        max-width: 30px; 
       }
       
       #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        left: 22px;
-        width: 40px;
-        min-width: 40px;
-        max-width: 40px;
-        font-size: 7px;
+      #main-table td:nth-child(2) { 
+        left: 30px; 
+        width: 60px; 
+        min-width: 60px; 
+        max-width: 60px; 
       }
       
-      #time-row th .hour {
-        font-size: 6px;
-        line-height: 7px;
+      td, th { 
+        font-size: 9px; 
+        height: 18px; 
+        padding: 0 1px;
       }
       
-      #time-row th .minute {
-        font-size: 5px;
-        line-height: 6px;
+      #time-row th .hour, 
+      #time-row th .minute { 
+        font-size: 8px; 
+      }
+      
+      .toggle-btn { 
+        font-size: 9px; 
+        height: 18px; 
+        line-height: 16px; 
       }
       
       #date-picker {
-        height: 12px;
-        font-size: 7px;
-      }
-      
-      .logo-cell img {
-        width: 18px !important;
-        height: 18px !important;
-      }
-    }
-
-    @media (max-height: 500px) {
-      td, th {
-        height: 12px;
-        font-size: 7px;
-      }
-      
-      body {
-        padding: 2px;
-      }
-      
-      #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 20px;
-        min-width: 20px;
-        max-width: 20px;
-      }
-      
-      #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        left: 20px;
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
-        font-size: 6px;
-      }
-      
-      #letter-row th:nth-child(n+3),
-      #time-row th:nth-child(n+3) {
-        width: 10px;
-        min-width: 10px;
-        max-width: 10px;
-      }
-      
-      #time-row th .hour {
-        font-size: 5px;
-      }
-      
-      #time-row th .minute {
-        font-size: 4px;
-      }
-      
-      .toggle-btn {
-        font-size: 5px;
-        height: 8px;
-        line-height: 6px;
-      }
-    }
-
-    /* Для очень широких экранов */
-    @media (min-height: 800px) {
-      td, th {
-        height: 18px;
         font-size: 10px;
+        padding: 5px;
+      }
+      
+      .status-message {
+        font-size: 10px;
+        padding: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html {
+        width: 100vh;
+        height: 100vw;
+        margin-top: -50vw;
+        margin-left: -50vh;
+      }
+      
+      body { 
+        padding: 5px; 
       }
       
       #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 28px;
+      #main-table td:nth-child(1) { 
+        width: 25px; 
+        min-width: 25px; 
+        max-width: 25px; 
       }
       
       #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        left: 28px;
-        width: 50px;
-        font-size: 9px;
+      #main-table td:nth-child(2) { 
+        left: 25px; 
+        width: 50px; 
+        min-width: 50px; 
+        max-width: 50px; 
       }
       
-      #date-picker {
-        height: 16px;
-        font-size: 9px;
-      }
-    }
-
-    /* Улучшения для touch устройств */
-    @media (hover: none) {
-      .toggle-btn {
-        width: 8px;
-        height: 12px;
-        font-size: 7px;
+      td, th { 
+        font-size: 8px; 
+        height: 16px; 
       }
       
-      #date-picker {
-        padding: 2px 3px;
+      .toggle-btn { 
+        font-size: 8px; 
+        height: 16px; 
+        line-height: 14px; 
+        padding: 0 3px;
       }
-    }
-
-    /* Оптимизация производительности */
-    #main-table {
-      transform: translateZ(0);
-      backface-visibility: hidden;
-    }
-
-    /* Улучшенная читаемость активных ячеек */
-    .active-cell {
-      box-shadow: inset 0 0 0 1px #fff;
-    }
-
-    /* Градиент для заголовков времени */
-    #time-row th:nth-child(n+3) {
-      background: linear-gradient(135deg, #ecf0f1 0%, #dfe6e9 100%);
     }
   </style>
 </head>
@@ -402,7 +354,7 @@
         <thead>
           <tr id="letter-row">
             <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" />
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:30px;height:30px;border-radius:0;" />
             </th>
             <th>
               <input type="date" id="date-picker" />
@@ -473,8 +425,7 @@
       btn.title = title;
       btn.textContent = '+';
       let last = 0;
-      btn.onclick = (e) => {
-        e.stopPropagation();
+      btn.onclick = () => {
         const now = Date.now();
         if (now - last < 300) toggleAll(!areAllHidden());
         else {
@@ -490,7 +441,6 @@
       const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
       for (let i = 1; i <= totalMinutes; i++) {
         const thL = document.createElement('th'); 
-        thL.style.position = 'relative';
         fragL.appendChild(thL);
         const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
         const thT = document.createElement('th');
@@ -502,7 +452,7 @@
           const idxs = [];
           for (let j = start; j <= end; j++) idxs.push(j);
           if (idxs.length) {
-            thL.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
             allGroups.push(idxs);
           }
         }
@@ -523,9 +473,6 @@
         const cells = [];
         for (let i = 0; i < totalMinutes; i++) {
           const td = document.createElement('td');
-          td.style.width = '12px';
-          td.style.minWidth = '12px';
-          td.style.maxWidth = '12px';
           tr.appendChild(td);
           cells.push(td);
         }
@@ -550,6 +497,7 @@
     }
 
     function setStatus(message, isError = false) {
+      // Сообщения больше не показываются пользователю
       console.log(message);
       if (isError) {
         console.error(message);
@@ -633,30 +581,24 @@
       buildBody();
       datePicker.addEventListener('change', loadData);
       
-      // Улучшенная подсветка строк и столбцов
+      // Добавляем обработчики для подсветки строк и столбцов
       document.addEventListener('mouseover', function(e) {
         if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
           const cell = e.target;
           const ci = cell.cellIndex;
           const row = cell.parentElement;
           
+          // Подсветка строки
           if (row && row.tagName === 'TR') {
-            const cells = row.querySelectorAll('td, th');
-            for (let c of cells) {
-              if (!c.classList.contains('active-cell')) {
-                c.classList.add('hover-row');
-              }
-            }
+            row.querySelectorAll('td, th').forEach(c => c.classList.add('hover-row'));
           }
           
+          // Подсветка столбца
           if (ci >= 0) {
-            const rows = document.querySelectorAll(`#main-table tr`);
-            for (let r of rows) {
+            document.querySelectorAll(`#main-table tr`).forEach(r => {
               const c = r.children[ci];
-              if (c && !c.classList.contains('active-cell')) {
-                c.classList.add('hover-col');
-              }
-            }
+              if (c) c.classList.add('hover-col');
+            });
           }
         }
       });
@@ -679,7 +621,7 @@
       
       // Обработчик клика по логотипу
       document.getElementById('logo-wrapper').addEventListener('click', () => { 
-        datePicker.showPicker ? datePicker.showPicker() : datePicker.click();
+        datePicker.click(); 
       });
       
       // Загрузка данных
