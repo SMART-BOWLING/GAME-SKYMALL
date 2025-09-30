@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ */
-    html {
-      transform: rotate(90deg);
-      transform-origin: center center;
-      width: 100vh;
-      height: 100vw;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin-top: -50vw;
-      margin-left: -50vh;
-      /* УБИРАЕМ overflow: hidden - ЭТО БЫЛА ОСНОВНАЯ ПРОБЛЕМА */
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
+    /* АЛЬТЕРНАТИВНЫЙ ПОДХОД С ОРИЕНТАЦИЕЙ */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      html, body {
+        transform: rotate(90deg);
+        transform-origin: center center;
+        width: 100vh;
+        height: 100vw;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
     }
-    
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
@@ -28,10 +28,11 @@
       padding: 10px;
       color: #333;
       width: 100%;
-      min-height: 100%;
+      min-height: 100vh;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      overflow-x: auto;
     }
 
     .container {
@@ -39,7 +40,6 @@
       min-height: 100%;
       display: flex;
       flex-direction: column;
-      /* УБИРАЕМ overflow: hidden */
       overflow: visible;
     }
 
@@ -53,8 +53,7 @@
       border: 1px solid #d7dce3;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      /* ДОБАВЛЯЕМ для лучшего скроллинга на мобильных */
-      max-height: calc(100vh - 40px);
+      max-height: 80vh;
     }
 
     table {
@@ -245,26 +244,20 @@
       color: #2e7d32;
     }
 
-    /* Адаптация для повернутого экрана */
+    /* Адаптация для мобильных */
     @media (max-width: 768px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
-        /* УБИРАЕМ overflow: hidden */
-        overflow: auto;
-      }
-      
       body { 
         padding: 8px; 
         font-size: 12px;
+        min-height: 100vh;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
       .table-wrapper { 
         border-radius: 6px;
-        /* ДОБАВЛЯЕМ для лучшего скроллинга на мобильных */
-        max-height: calc(100vh - 30px);
+        max-height: 70vh;
+        -webkit-overflow-scrolling: touch;
       }
       
       table { 
@@ -315,15 +308,6 @@
     }
 
     @media (max-width: 480px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
-        /* УБИРАЕМ overflow: hidden */
-        overflow: auto;
-      }
-      
       body { 
         padding: 5px; 
       }
@@ -355,9 +339,34 @@
         padding: 0 3px;
       }
     }
+
+    /* Стиль для кнопки принудительного поворота */
+    .rotate-hint {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 1000;
+    }
+
+    @media screen and (max-width: 768px) and (orientation: portrait) {
+      .rotate-hint {
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="rotate-hint">
+    <p>Пожалуйста, поверните устройство в альбомную ориентацию для лучшего просмотра</p>
+  </div>
+
   <div class="container">
     <div id="status" class="status-message"></div>
     
@@ -618,7 +627,7 @@
       document.addEventListener('mouseout', function(e) {
         if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
           document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
-            el.classList.remove('hover-row', 'hover-col');
+            el.classList.remove('hover-row', .hover-col');
           });
         }
       });
@@ -638,6 +647,13 @@
       
       // Загрузка данных
       setTimeout(loadData, 500);
+
+      // Обработчик изменения ориентации
+      window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+          window.scrollTo(0, 0);
+        }, 100);
+      });
     }
 
     window.addEventListener('load', init);
