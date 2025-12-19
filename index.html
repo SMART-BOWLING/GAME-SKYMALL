@@ -2,29 +2,12 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Боулинг - Расписание</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* Базовые стили */
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6fa;
-      color: #333;
-    }
-    
-    /* Поворот экрана для мобильных */
-    @media screen and (max-width: 1024px) {
-      html, body {
+    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ - оптимизировано */
+    @media screen and (orientation: portrait) {
+      html {
         transform: rotate(90deg);
         transform-origin: center center;
         width: 100vh;
@@ -34,725 +17,827 @@
         left: 50%;
         margin-top: -50vw;
         margin-left: -50vh;
+        overflow: hidden;
       }
     }
     
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6fa;
+      margin: 0;
+      padding: 10px;
+      color: #333;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+
     .container {
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 10px;
       overflow: hidden;
     }
-    
-    /* Шапка */
-    .header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-      padding: 10px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .logo {
-      width: 40px;
-      height: 40px;
-      margin-right: 15px;
-      cursor: pointer;
-    }
-    
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-    
-    .date-input-container {
-      flex: 1;
-    }
-    
-    #date-picker {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      background: white;
-      color: #333;
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-    
-    #date-picker:focus {
-      border-color: #dc143c;
-    }
-    
-    /* Общий тотал */
-    .total-display {
-      padding: 8px;
-      margin-bottom: 10px;
-      background: white;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #2c3e50;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    /* Контейнер таблицы */
-    .table-container {
-      flex: 1;
+
+    .table-wrapper {
+      overflow-x: auto;
+      overflow-y: auto;
       position: relative;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .table-scroll {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow: auto;
       -webkit-overflow-scrolling: touch;
+      flex: 1;
+      margin: 0 auto;
+      border: 1px solid #d7dce3;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      background: linear-gradient(90deg, white 0%, white 120px, transparent 120px),
+                  linear-gradient(0deg, white 0%, white 44px, transparent 44px);
+      background-attachment: local, local;
     }
-    
-    /* Стили таблицы */
+
     table {
       border-collapse: collapse;
       width: auto;
+      table-layout: fixed;
+      background-color: white;
       min-width: 800px;
-      background: white;
     }
-    
-    /* Фиксированные колонки */
-    #main-table th:nth-child(1),
-    #main-table td:nth-child(1) {
-      position: sticky;
-      left: 0;
-      z-index: 10;
-      background: #dc143c;
-      color: white;
-      font-weight: bold;
-      width: 45px;
-      min-width: 45px;
+
+    td, th {
+      height: 22px;
       text-align: center;
+      font-size: 11px;
+      border: 1px solid #d7dce3;
+      box-sizing: border-box;
+      white-space: nowrap;
+      vertical-align: middle;
+      position: relative;
+      transition: background-color 0.2s ease;
+      padding: 0 3px;
     }
-    
+
+    th {
+      background-color: #ecf0f1;
+      color: #1a2f40;
+      font-weight: 600;
+    }
+
+    /* Фиксированные первые два столбца */
+    #main-table th:nth-child(1),
+    #main-table td:nth-child(1),
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
       position: sticky;
-      left: 45px;
-      z-index: 9;
-      background: #2c3e50;
+    }
+    #main-table th:nth-child(1),
+    #main-table td:nth-child(1) {
+      left: 0;
+      z-index: 30;
+      background-color: #dc143c;
       color: white;
-      font-weight: 600;
+      width: 40px;
+      min-width: 40px;
+      max-width: 40px;
+      font-weight: bold;
+    }
+    #main-table th:nth-child(2),
+    #main-table td:nth-child(2) {
+      left: 40px;
+      z-index: 25;
+      background-color: #2c3e50;
+      color: white;
       width: 80px;
       min-width: 80px;
-      text-align: center;
+      max-width: 80px;
+      overflow: hidden;
+      font-weight: bold;
     }
-    
-    /* Заголовки */
-    th {
-      background: #f8f9fa;
-      color: #2c3e50;
-      font-weight: 600;
-      border: 1px solid #dee2e6;
+
+    /* Фиксированные заголовки */
+    #letter-row,
+    #time-row {
       position: sticky;
       top: 0;
-      z-index: 8;
+      z-index: 20;
     }
     
-    /* Ячейки */
-    td, th {
-      height: 25px;
-      font-size: 12px;
-      border: 1px solid #dee2e6;
-      text-align: center;
+    #letter-row th:nth-child(1),
+    #letter-row th:nth-child(2),
+    #time-row th:nth-child(1),
+    #time-row th:nth-child(2) {
+      background-color: #ecf0f1 !important;
+      color: #2c3e50 !important;
+      border: 0px solid #d7dce3 !important;
+      z-index: 40;
+    }
+
+    #letter-row th:nth-child(n+3) {
+      background-color: #ecf0f1 !important;
+      color: #2c3e50;
+      border: 1px solid #e0e0e0 !important;
+      width: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      z-index: 15;
+    }
+    #time-row th:nth-child(n+3) {
+      white-space: normal;
+      padding: 2px 1px;
+      line-height: 1;
       vertical-align: middle;
-      padding: 0 3px;
-      white-space: nowrap;
+      border: 1px solid #e0e0e0;
+      width: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      background-color: #ecf0f1;
+      z-index: 10;
     }
-    
-    /* Специальные ячейки */
-    .active-cell {
-      background: #2c3e50 !important;
-      color: white !important;
-      font-weight: bold;
-    }
-    
-    .booked-cell {
-      color: #666;
-      font-weight: 500;
-    }
-    
-    .free-cell {
-      color: #dc143c;
-      font-weight: 600;
-    }
-    
-    /* Кнопки группировки */
-    .group-btn {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 12px;
-      line-height: 18px;
-      margin: 0;
-      padding: 0;
-      vertical-align: middle;
-    }
-    
-    .group-btn:hover {
-      background: #dc143c;
-    }
-    
-    /* Заголовки времени */
-    .time-header {
+    #time-row th div {
       display: flex;
       flex-direction: column;
-      font-size: 10px;
-      line-height: 1.2;
+      align-items: center;
     }
-    
-    .hour {
+    #time-row th .hour {
+      font-size: 10px;
       font-weight: bold;
     }
-    
-    /* Скрытые колонки */
-    .hidden {
+    #time-row th .minute {
+      font-size: 10px;
+    }
+
+    .hidden-column {
       display: none !important;
     }
+    .active-cell {
+      background-color: #2c3e50;
+      color: #fff;
+      font-weight: 700;
+      position: relative;
+    }
+    .active-cell::after {
+      content: '🎳';
+      font-size: 10px;
+    }
+    td.hover-row, th.hover-row,
+    td.hover-col, th.hover-col {
+      background-color: rgba(250, 132, 156, 0.3) !important;
+    }
+    td.hover-col.active-cell {
+      background-color: #4a6278 !important;
+    }
+
+    #date-picker {
+      width: 100%;
+      padding: 6px;
+      font-size: 12px;
+      font-family: 'Arial Black','Impact', sans-serif;
+      border: 1px solid #ecf0f1;
+      border-radius: 6px;
+      background-color: #ecf0f1;
+      color: #1a2f40;
+      box-sizing: border-box;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+      font-weight: bold;
+    }
+    #date-picker:hover {
+      background-color: #e0e0e0;
+    }
+    #date-picker:focus {
+      background-color: white;
+      border-color: #dc143c;
+    }
+    #date-picker::-webkit-calendar-picker-indicator {
+      filter: invert(0.3);
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    /* Кнопки группировки */
+    .toggle-btn {
+      cursor: pointer;
+      user-select: none;
+      color: #fff;
+      background-color: #1a2f40;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 11px;
+      line-height: 18px;
+      padding: 0 4px;
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      text-align: center;
+      transition: all 0.2s ease;
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .toggle-btn:hover {
+      background-color: #dc143c;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-message {
+      display: none;
+      text-align: center;
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      font-size: 12px;
+    }
+
+    .error {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
+    }
+
+    .success {
+      color: #2e7d32;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
     
-    /* Индикатор загрузки */
+    .control-btn {
+      padding: 6px 12px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background-color 0.2s;
+    }
+    
+    .control-btn:hover {
+      background-color: #dc143c;
+    }
+    
+    .current-date {
+      flex-grow: 1;
+      text-align: center;
+      font-weight: bold;
+      color: #2c3e50;
+      padding: 6px;
+      background-color: #ecf0f1;
+      border-radius: 4px;
+    }
+
+    .cell-legend {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Адаптация для повернутого экрана */
+    @media (max-width: 768px) {
+      @media screen and (orientation: portrait) {
+        html {
+          width: 100vh;
+          height: 100vw;
+          margin-top: -50vw;
+          margin-left: -50vh;
+        }
+      }
+      
+      body { 
+        padding: 8px; 
+        font-size: 12px;
+      }
+      
+      .table-wrapper { 
+        border-radius: 6px;
+      }
+      
+      table { 
+        min-width: 800px; 
+      }
+      
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) { 
+        width: 35px; 
+        min-width: 35px; 
+        max-width: 35px; 
+      }
+      
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) { 
+        left: 35px; 
+        width: 70px; 
+        min-width: 70px; 
+        max-width: 70px; 
+      }
+      
+      td, th { 
+        font-size: 10px; 
+        height: 20px; 
+        padding: 0 2px;
+      }
+      
+      #time-row th .hour, 
+      #time-row th .minute { 
+        font-size: 9px; 
+      }
+      
+      .toggle-btn { 
+        font-size: 10px; 
+        height: 18px; 
+        line-height: 16px; 
+      }
+      
+      #date-picker {
+        font-size: 11px;
+        padding: 5px;
+      }
+      
+      .status-message {
+        font-size: 10px;
+        padding: 6px;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      @media screen and (orientation: portrait) {
+        html {
+          width: 100vh;
+          height: 100vw;
+          margin-top: -50vw;
+          margin-left: -50vh;
+        }
+      }
+      
+      body { 
+        padding: 5px; 
+      }
+      
+      #main-table th:nth-child(1),
+      #main-table td:nth-child(1) { 
+        width: 30px; 
+        min-width: 30px; 
+        max-width: 30px; 
+      }
+      
+      #main-table th:nth-child(2),
+      #main-table td:nth-child(2) { 
+        left: 30px; 
+        width: 60px; 
+        min-width: 60px; 
+        max-width: 60px; 
+      }
+      
+      td, th { 
+        font-size: 9px; 
+        height: 18px; 
+      }
+      
+      .toggle-btn { 
+        font-size: 9px; 
+        height: 16px; 
+        line-height: 14px; 
+        padding: 0 3px;
+      }
+    }
+    
+    /* Стили для переполненных ячеек */
+    td:not(.active-cell) {
+      overflow: hidden;
+    }
+    
+    /* Улучшенная анимация загрузки */
     .loading-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(255,255,255,0.8);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       z-index: 1000;
-      color: white;
-      font-size: 18px;
-      font-weight: 500;
-    }
-    
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s linear infinite;
-      margin-right: 15px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    /* Адаптация */
-    @media (max-width: 768px) {
-      .container {
-        padding: 5px;
-      }
-      
-      .header {
-        padding: 8px;
-        margin-bottom: 8px;
-      }
-      
-      .logo {
-        width: 35px;
-        height: 35px;
-      }
-      
-      #date-picker {
-        padding: 8px;
-        font-size: 13px;
-      }
-      
-      td, th {
-        height: 22px;
-        font-size: 11px;
-      }
-      
-      #main-table th:nth-child(1),
-      #main-table td:nth-child(1) {
-        width: 40px;
-        min-width: 40px;
-      }
-      
-      #main-table th:nth-child(2),
-      #main-table td:nth-child(2) {
-        left: 40px;
-        width: 70px;
-        min-width: 70px;
-      }
+      font-size: 14px;
+      color: #2c3e50;
+      flex-direction: column;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <div class="logo" id="logo-btn">
-        <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Логотип">
-      </div>
-      <div class="date-input-container">
-        <input type="date" id="date-picker">
-      </div>
+    <div class="controls">
+      <button class="control-btn" id="prev-day">← Назад</button>
+      <div class="current-date" id="current-date"></div>
+      <button class="control-btn" id="next-day">Вперед →</button>
+      <button class="control-btn" id="toggle-all">Развернуть все</button>
+      <button class="control-btn" id="today-btn">Сегодня</button>
     </div>
     
-    <div class="total-display">
-      Общее время броней: <span id="overall-total">0ч 0м</span>
+    <div class="table-wrapper">
+      <table id="main-table">
+        <thead>
+          <tr id="letter-row">
+            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:35px;height:35px;border-radius:0;" />
+            </th>
+            <th>
+              <input type="date" id="date-picker" />
+            </th>
+          </tr>
+          <tr id="time-row">
+            <th>LANE</th>
+            <th id="overall-total">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
     </div>
     
-    <div class="table-container">
-      <div class="table-scroll">
-        <table id="main-table">
-          <thead>
-            <tr id="letter-row">
-              <th>Дор.</th>
-              <th>Итог</th>
-              <!-- Заголовки минут будут добавлены через JS -->
-            </tr>
-            <tr id="time-row">
-              <th></th>
-              <th></th>
-              <!-- Заголовки времени будут добавлены через JS -->
-            </tr>
-          </thead>
-          <tbody id="table-body">
-            <!-- Строки будут добавлены через JS -->
-          </tbody>
-        </table>
+    <div class="legend">
+      <div class="legend-item">
+        <span class="cell-legend" style="background-color: #2c3e50;"></span>
+        <span>Броски</span>
+      </div>
+      <div class="legend-item">
+        <span class="cell-legend" style="background-color: transparent; border: 1px solid #dc143c; color: #dc143c;">⚡︎</span>
+        <span>Нет данных</span>
+      </div>
+      <div class="legend-item">
+        <span class="cell-legend" style="background-color: white;"></span>
+        <span>Без бросков</span>
       </div>
     </div>
-  </div>
-  
-  <div class="loading-overlay" id="loading-overlay" style="display: none;">
-    <div class="spinner"></div>
-    <div id="loading-text">Загрузка...</div>
   </div>
 
   <script>
-    // Конфигурация
-    const CONFIG = {
-      // Упрощенный URL для тестирования - позже заменить на реальный
-      SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec',
-      TOTAL_MINUTES: 1440, // 24 часа
-      GROUP_INTERVAL: 15,
-      GROUP_SIZE: 14,
-      LANES: 16
-    };
-
-    // Глобальные переменные
-    let allGroups = [];
-    let allDataCells = [];
-    let currentDate = '';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJcg8Ov4_-ijxTLQxJDjm2-IKCmI8l0AAsDo4sMeU-avSQp3F_E54gyB7f26z_KaE0FA/exec';
+    const totalMinutes = 1440, groupInterval = 15, groupSize = 14;
+    const letterRow = document.getElementById('letter-row'),
+          timeRow = document.getElementById('time-row'),
+          overallTotal = document.getElementById('overall-total'),
+          tableBody = document.getElementById('table-body'),
+          datePicker = document.getElementById('date-picker'),
+          currentDateEl = document.getElementById('current-date'),
+          prevDayBtn = document.getElementById('prev-day'),
+          nextDayBtn = document.getElementById('next-day'),
+          toggleAllBtn = document.getElementById('toggle-all'),
+          todayBtn = document.getElementById('today-btn');
+    const allGroups = [], allDataCells = [];
     let isLoading = false;
+    const fetchControllers = new Map();
 
-    // DOM элементы
-    const elements = {
-      datePicker: document.getElementById('date-picker'),
-      overallTotal: document.getElementById('overall-total'),
-      tableBody: document.getElementById('table-body'),
-      letterRow: document.getElementById('letter-row'),
-      timeRow: document.getElementById('time-row'),
-      loadingOverlay: document.getElementById('loading-overlay'),
-      loadingText: document.getElementById('loading-text'),
-      logoBtn: document.getElementById('logo-btn')
-    };
-
-    // Функции утилиты
-    function formatMinutes(minutes) {
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-      return `${hours}ч ${mins}м`;
+    function formatMinutes(mins) {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      return `${h}ч ${m}м`;
     }
 
-    function showLoading(message = 'Загрузка...') {
-      elements.loadingText.textContent = message;
-      elements.loadingOverlay.style.display = 'flex';
+    function formatDateForDisplay(dateStr) {
+      const date = new Date(dateStr);
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('ru-RU', options);
     }
 
-    function hideLoading() {
-      elements.loadingOverlay.style.display = 'none';
+    function updateDateDisplay(dateStr) {
+      currentDateEl.textContent = formatDateForDisplay(dateStr);
     }
 
-    // Построение структуры таблицы
-    function buildTableStructure() {
-      // Строим заголовки
-      buildHeaders();
-      
-      // Строим тело таблицы
-      buildTableBody();
-      
-      // Инициализируем все группы как свернутые
-      setTimeout(() => {
-        toggleAllGroups(true);
-      }, 100);
+    function toggleGroup(idxs) {
+      idxs.forEach(i => {
+        [timeRow, letterRow].forEach(row => {
+          if (row.children[i+2]) row.children[i+2].classList.toggle('hidden-column');
+        });
+        tableBody.querySelectorAll('tr').forEach(tr => {
+          if (tr.children[i+2]) tr.children[i+2].classList.toggle('hidden-column');
+        });
+      });
+    }
+
+    function areAllHidden() {
+      return allGroups.every(g => {
+        const el = timeRow.children[g[0]+2];
+        return el && el.classList.contains('hidden-column');
+      });
+    }
+
+    function toggleAll(forceHide=null) {
+      const shouldHide = forceHide !== null ? forceHide : !areAllHidden();
+      allGroups.forEach(g => {
+        const el = timeRow.children[g[0]+2];
+        if (el) {
+          const hidden = el.classList.contains('hidden-column');
+          if (hidden !== shouldHide) toggleGroup(g);
+        }
+      });
+      document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
+      toggleAllBtn.textContent = shouldHide ? 'Развернуть все' : 'Свернуть все';
+    }
+
+    function makeBtn(idxs, title) {
+      const btn = document.createElement('div');
+      btn.className = 'toggle-btn';
+      btn.title = title;
+      btn.textContent = '+';
+      let last = 0;
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const now = Date.now();
+        if (now - last < 300) {
+          toggleAll(!areAllHidden());
+        } else {
+          toggleGroup(idxs);
+          btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
+        }
+        last = now;
+      };
+      return btn;
     }
 
     function buildHeaders() {
-      // Очищаем существующие заголовки
-      while (elements.letterRow.children.length > 2) {
-        elements.letterRow.removeChild(elements.letterRow.lastChild);
-      }
-      while (elements.timeRow.children.length > 2) {
-        elements.timeRow.removeChild(elements.timeRow.lastChild);
-      }
-      
-      allGroups = [];
-      
-      // Создаем заголовки для каждой минуты
-      for (let i = 1; i <= CONFIG.TOTAL_MINUTES; i++) {
-        const minute = i - 1; // 0-1439
-        const hour = Math.floor(minute / 60);
-        const min = minute % 60;
-        
-        // Заголовок для кнопки группировки
-        const thLetter = document.createElement('th');
-        
-        // Заголовок для времени
-        const thTime = document.createElement('th');
-        const timeDiv = document.createElement('div');
-        timeDiv.className = 'time-header';
-        timeDiv.innerHTML = `<div class="hour">${String(hour).padStart(2, '0')}</div>
-                            <div class="minute">${String(min).padStart(2, '0')}</div>`;
-        thTime.appendChild(timeDiv);
-        
-        // Добавляем кнопку группировки каждые 15 минут
-        if (minute % CONFIG.GROUP_INTERVAL === 0) {
-          const groupStart = minute;
-          const groupEnd = Math.min(groupStart + CONFIG.GROUP_SIZE - 1, CONFIG.TOTAL_MINUTES - 1);
-          const groupIndexes = [];
-          
-          for (let j = groupStart; j <= groupEnd; j++) {
-            groupIndexes.push(j);
-          }
-          
-          if (groupIndexes.length > 0) {
-            const groupBtn = document.createElement('button');
-            groupBtn.className = 'group-btn';
-            groupBtn.textContent = '+';
-            groupBtn.title = `Группа ${formatMinutes(groupIndexes[0])}-${formatMinutes(groupIndexes[groupIndexes.length-1])}`;
-            
-            groupBtn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              toggleGroup(groupIndexes);
-              const isHidden = elements.timeRow.children[groupIndexes[0] + 2].classList.contains('hidden');
-              groupBtn.textContent = isHidden ? '+' : '-';
-            });
-            
-            thLetter.appendChild(groupBtn);
-            allGroups.push(groupIndexes);
+      const fragL = document.createDocumentFragment(), fragT = document.createDocumentFragment();
+      for (let i = 1; i <= totalMinutes; i++) {
+        const thL = document.createElement('th'); 
+        fragL.appendChild(thL);
+        const h = Math.floor((i - 1) / 60), m = (i - 1) % 60;
+        const thT = document.createElement('th');
+        thT.innerHTML = `<div class="hour">${String(h).padStart(2,'0')}</div><div class="minute">${String(m).padStart(2,'0')}</div>`;
+        fragT.appendChild(thT);
+        if ((h*60 + m) % groupInterval === 0) {
+          const start = (h*60 + m) === 0 ? 1 : (h*60 + m) + 1;
+          const end = Math.min(start + groupSize - 1, totalMinutes - 1);
+          const idxs = [];
+          for (let j = start; j <= end; j++) idxs.push(j);
+          if (idxs.length) {
+            fragL.lastChild.appendChild(makeBtn(idxs, `Свернуть/развернуть ${formatMinutes(idxs[0])}–${formatMinutes(idxs[idxs.length-1])}`));
+            allGroups.push(idxs);
           }
         }
-        
-        elements.letterRow.appendChild(thLetter);
-        elements.timeRow.appendChild(thTime);
       }
+      letterRow.appendChild(fragL);
+      timeRow.appendChild(fragT);
     }
 
-    function buildTableBody() {
-      elements.tableBody.innerHTML = '';
-      allDataCells = [];
-      
-      // Создаем 16 строк (дорожек)
-      for (let lane = 0; lane < CONFIG.LANES; lane++) {
-        const row = document.createElement('tr');
-        
-        // Ячейка номера дорожки
-        const laneCell = document.createElement('th');
-        laneCell.textContent = lane + 1;
-        row.appendChild(laneCell);
-        
-        // Ячейка итога по дорожке
-        const totalCell = document.createElement('th');
-        totalCell.textContent = '0ч 0м';
-        row.appendChild(totalCell);
-        
-        // Ячейки для каждой минуты
-        const minuteCells = [];
-        for (let minute = 0; minute < CONFIG.TOTAL_MINUTES; minute++) {
-          const cell = document.createElement('td');
-          cell.dataset.lane = lane;
-          cell.dataset.minute = minute;
-          row.appendChild(cell);
-          minuteCells.push(cell);
+    function buildBody() {
+      const frag = document.createDocumentFragment();
+      for (let lane = 0; lane < 16; lane++) {
+        const tr = document.createElement('tr');
+        const thLane = document.createElement('th'); 
+        thLane.textContent = lane + 1; 
+        tr.appendChild(thLane);
+        const thCount = document.createElement('th'); 
+        tr.appendChild(thCount);
+        const cells = [];
+        for (let i = 0; i < totalMinutes; i++) {
+          const td = document.createElement('td');
+          tr.appendChild(td);
+          cells.push(td);
         }
-        
-        elements.tableBody.appendChild(row);
-        
-        // Сохраняем ссылки на ячейки
-        allDataCells.push({
-          lane: lane,
-          totalCell: totalCell,
-          cells: minuteCells
-        });
+        frag.appendChild(tr);
+        allDataCells.push({ header: thCount, cells });
       }
+      tableBody.appendChild(frag);
     }
 
-    // Управление группами
-    function toggleGroup(groupIndexes) {
-      groupIndexes.forEach(index => {
-        // Переключаем заголовки
-        if (elements.letterRow.children[index + 2]) {
-          elements.letterRow.children[index + 2].classList.toggle('hidden');
-        }
-        if (elements.timeRow.children[index + 2]) {
-          elements.timeRow.children[index + 2].classList.toggle('hidden');
-        }
-        
-        // Переключаем ячейки в теле таблицы
-        elements.tableBody.querySelectorAll('tr').forEach(row => {
-          if (row.children[index + 2]) {
-            row.children[index + 2].classList.toggle('hidden');
-          }
+    function clearRows() {
+      fetchControllers.forEach(controller => controller.abort());
+      fetchControllers.clear();
+      overallTotal.textContent = '0ч 0м';
+      allDataCells.forEach(r => {
+        r.header.textContent = '';
+        r.cells.forEach(c => {
+          c.classList.remove('active-cell');
+          c.textContent = '';
+          c.style.color = '';
+          c.style.backgroundColor = '';
         });
       });
     }
 
-    function toggleAllGroups(collapse = null) {
-      const shouldCollapse = collapse !== null ? collapse : !allGroups.some(group => {
-        const firstCell = elements.timeRow.children[group[0] + 2];
-        return firstCell && !firstCell.classList.contains('hidden');
-      });
-      
-      allGroups.forEach(group => {
-        const firstCell = elements.timeRow.children[group[0] + 2];
-        if (firstCell) {
-          const isHidden = firstCell.classList.contains('hidden');
-          if ((shouldCollapse && !isHidden) || (!shouldCollapse && isHidden)) {
-            toggleGroup(group);
-          }
-        }
-      });
-      
-      // Обновляем текст кнопок
-      document.querySelectorAll('.group-btn').forEach(btn => {
-        btn.textContent = shouldCollapse ? '+' : '-';
-      });
+    function createLoadingOverlay() {
+      const overlay = document.createElement('div');
+      overlay.className = 'loading-overlay';
+      overlay.innerHTML = `
+        <div class="loading"></div>
+        <div>Загрузка данных...</div>
+      `;
+      document.body.appendChild(overlay);
+      return overlay;
     }
 
-    // Загрузка данных
+    async function loadLaneData(idx, selectedDate) {
+      const controller = new AbortController();
+      fetchControllers.set(idx, controller);
+      try {
+        const url = `${SCRIPT_URL}?action=getData&index=${idx}&date=${selectedDate}&t=${Date.now()}`;
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        return data;
+      } finally { 
+        fetchControllers.delete(idx); 
+      }
+    }
+
     async function loadData() {
-      const selectedDate = elements.datePicker.value;
-      if (!selectedDate || isLoading) return;
+      if (!datePicker.value || isLoading) return;
       
-      currentDate = selectedDate;
       isLoading = true;
+      const loadingOverlay = createLoadingOverlay();
+      clearRows();
       
-      // Показываем индикатор загрузки
-      showLoading('Загрузка данных...');
+      const selectedDate = datePicker.value;
+      updateDateDisplay(selectedDate);
       
-      // Очищаем предыдущие данные
-      allDataCells.forEach(laneData => {
-        laneData.totalCell.textContent = '0ч 0м';
-        laneData.cells.forEach(cell => {
-          cell.textContent = '';
-          cell.className = '';
-        });
-      });
-      elements.overallTotal.textContent = '0ч 0м';
-      
-      let totalBookedMinutes = 0;
-      let loadedLanes = 0;
+      let done = 0, sumAll = 0;
+      const errors = [];
+      const promises = [];
       
       try {
-        // Для тестирования - используем заглушки данных
-        // В реальном приложении здесь будет запрос к Google Apps Script
-        const testData = generateTestData();
-        
-        // Обрабатываем тестовые данные
-        testData.forEach((laneData, laneIndex) => {
-          if (laneIndex < allDataCells.length) {
-            processLaneData(laneIndex, laneData);
-            loadedLanes++;
-            elements.loadingText.textContent = `Загружено ${loadedLanes} из ${CONFIG.LANES} дорожек`;
-          }
-        });
-        
-        // Обновляем общий итог
-        elements.overallTotal.textContent = formatMinutes(totalBookedMinutes);
-        
-        // Скрываем индикатор загрузки
-        setTimeout(hideLoading, 500);
-        
-      } catch (error) {
-        console.error('Ошибка загрузки:', error);
-        elements.loadingText.textContent = 'Ошибка загрузки';
-        setTimeout(hideLoading, 2000);
-      } finally {
-        isLoading = false;
-      }
-    }
-
-    // Генерация тестовых данных (для демонстрации)
-    function generateTestData() {
-      const lanes = [];
-      
-      for (let lane = 0; lane < CONFIG.LANES; lane++) {
-        const bookedTimes = [];
-        const busyTimes = [];
-        
-        // Генерируем случайные брони
-        for (let i = 0; i < 5; i++) {
-          const hour = Math.floor(Math.random() * 24);
-          const minute = Math.floor(Math.random() * 4) * 15; // 0, 15, 30, 45
-          const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-          bookedTimes.push(timeStr);
+        for (let idx = 0; idx < allDataCells.length; idx++) {
+          promises.push(
+            loadLaneData(idx, selectedDate)
+              .then(data => {
+                const row = allDataCells[idx];
+                let sum = 0;
+                row.cells.forEach((cell, i) => {
+                  const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
+                  cell.classList.remove('active-cell');
+                  cell.textContent = '';
+                  
+                  if (data.c && data.c.includes(time)) { 
+                    cell.classList.add('active-cell'); 
+                    sum++; 
+                  }
+                  else if (data.b && data.b.includes(time)) { 
+                    cell.style.backgroundColor = '#f8f9fa';
+                  }
+                  else { 
+                    cell.textContent = '⚡︎'; 
+                    cell.style.color = '#dc143c';
+                  }
+                });
+                row.header.textContent = formatMinutes(sum);
+                sumAll += sum;
+                done++;
+              })
+              .catch(err => { 
+                console.error(`Ошибка дорожки ${idx+1}:`, err); 
+                errors.push(`Дорожка ${idx+1}: ${err.message}`); 
+                done++; 
+              })
+          );
         }
         
-        // Генерируем случайные занятые слоты (не брони)
-        for (let i = 0; i < 10; i++) {
-          const hour = Math.floor(Math.random() * 24);
-          const minute = Math.floor(Math.random() * 12) * 5; // 0, 5, 10, ..., 55
-          const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-          if (!bookedTimes.includes(timeStr)) {
-            busyTimes.push(timeStr);
-          }
-        }
+        await Promise.allSettled(promises);
+        overallTotal.textContent = formatMinutes(sumAll);
         
-        lanes.push({
-          c: bookedTimes, // booked (бронь)
-          b: busyTimes    // busy (занято)
-        });
-      }
-      
-      return lanes;
-    }
-
-    // Обработка данных для одной дорожки
-    function processLaneData(laneIndex, data) {
-      const laneData = allDataCells[laneIndex];
-      let bookedMinutes = 0;
-      
-      laneData.cells.forEach((cell, minuteIndex) => {
-        const hour = Math.floor(minuteIndex / 60);
-        const minute = minuteIndex % 60;
-        const timeKey = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-        
-        // Очищаем ячейку
-        cell.textContent = '';
-        cell.className = '';
-        
-        if (data.c && data.c.includes(timeKey)) {
-          // Бронь
-          cell.textContent = '🎳';
-          cell.className = 'active-cell';
-          bookedMinutes++;
-        } else if (data.b && data.b.includes(timeKey)) {
-          // Занято (не бронь)
-          cell.textContent = '●';
-          cell.className = 'booked-cell';
+        if (errors.length > 0) {
+          console.warn(`Загрузка завершена с ошибками: ${errors.join('; ')}`);
         } else {
-          // Свободно
-          cell.textContent = '⚡︎';
-          cell.className = 'free-cell';
+          console.log(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
+        }
+      } catch (error) { 
+        console.error('Общая ошибка:', error); 
+      }
+      finally { 
+        isLoading = false; 
+        if (loadingOverlay && loadingOverlay.parentNode) {
+          loadingOverlay.parentNode.removeChild(loadingOverlay);
+        }
+      }
+    }
+
+    function navigateDate(days) {
+      const currentDate = new Date(datePicker.value);
+      currentDate.setDate(currentDate.getDate() + days);
+      const newDate = currentDate.toISOString().split('T')[0];
+      datePicker.value = newDate;
+      loadData();
+    }
+
+    function setToday() {
+      const t = new Date();
+      const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+      datePicker.value = iso;
+      loadData();
+    }
+
+    function init() {
+      buildHeaders();
+      buildBody();
+      
+      // Устанавливаем сегодняшнюю дату по умолчанию
+      setToday();
+      
+      // Назначаем обработчики событий
+      datePicker.addEventListener('change', loadData);
+      prevDayBtn.addEventListener('click', () => navigateDate(-1));
+      nextDayBtn.addEventListener('click', () => navigateDate(1));
+      toggleAllBtn.addEventListener('click', () => toggleAll());
+      todayBtn.addEventListener('click', setToday);
+      
+      // Добавляем горячие клавиши
+      document.addEventListener('keydown', (e) => {
+        if (e.target !== datePicker) {
+          if (e.key === 'ArrowLeft') navigateDate(-1);
+          if (e.key === 'ArrowRight') navigateDate(1);
+          if (e.key === 't' || e.key === 'T') setToday();
+          if (e.key === 'a' || e.key === 'A') toggleAll();
         }
       });
       
-      // Обновляем итог по дорожке
-      laneData.totalCell.textContent = formatMinutes(bookedMinutes);
-      
-      // Добавляем к общему счетчику
-      const currentTotal = parseInt(elements.overallTotal.textContent.split('ч')[0]) * 60 + 
-                          parseInt(elements.overallTotal.textContent.split('ч')[1].split('м')[0].trim());
-      elements.overallTotal.textContent = formatMinutes(currentTotal + bookedMinutes);
-    }
-
-    // Инициализация приложения
-    function initApp() {
-      // Устанавливаем сегодняшнюю дату
-      const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
-      elements.datePicker.value = todayStr;
-      elements.datePicker.max = todayStr; // Можно выбрать только сегодня или раньше
-      
-      // Строим таблицу
-      buildTableStructure();
-      
-      // Настраиваем обработчики событий
-      elements.datePicker.addEventListener('change', loadData);
-      elements.logoBtn.addEventListener('click', () => {
-        elements.datePicker.focus();
-        elements.datePicker.showPicker?.();
-      });
-      
-      // Загружаем начальные данные
-      setTimeout(loadData, 500);
-      
-      // Добавляем обработчики для подсветки
-      initHoverEffects();
-      
-      // Тестируем загрузку
-      console.log('Приложение инициализировано. Дата:', todayStr);
-    }
-
-    // Подсветка строк и колонок
-    function initHoverEffects() {
-      let hoverTimeout;
-      
-      document.addEventListener('mouseover', (e) => {
-        const cell = e.target;
-        if (cell.tagName === 'TD' || cell.tagName === 'TH') {
-          clearTimeout(hoverTimeout);
-          
-          const row = cell.closest('tr');
-          const colIndex = cell.cellIndex;
+      // Добавляем обработчики для подсветки строк и столбцов
+      document.addEventListener('mouseover', function(e) {
+        if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
+          const cell = e.target;
+          const ci = cell.cellIndex;
+          const row = cell.parentElement;
           
           // Подсветка строки
-          if (row) {
-            row.querySelectorAll('td, th').forEach(c => {
-              c.style.backgroundColor = 'rgba(250, 132, 156, 0.15)';
-            });
+          if (row && row.tagName === 'TR') {
+            row.querySelectorAll('td, th').forEach(c => c.classList.add('hover-row'));
           }
           
-          // Подсветка колонки
-          if (colIndex >= 0) {
-            document.querySelectorAll('#main-table tr').forEach(r => {
-              const colCell = r.children[colIndex];
-              if (colCell) {
-                colCell.style.backgroundColor = 'rgba(250, 132, 156, 0.1)';
-              }
+          // Подсветка столбца
+          if (ci >= 0) {
+            document.querySelectorAll(`#main-table tr`).forEach(r => {
+              const c = r.children[ci];
+              if (c) c.classList.add('hover-col');
             });
           }
         }
       });
       
-      document.addEventListener('mouseout', (e) => {
+      document.addEventListener('mouseout', function(e) {
         if (e.target.tagName === 'TD' || e.target.tagName === 'TH') {
-          hoverTimeout = setTimeout(() => {
-            document.querySelectorAll('#main-table td, #main-table th').forEach(cell => {
-              cell.style.backgroundColor = '';
-            });
-          }, 100);
+          document.querySelectorAll('.hover-row, .hover-col').forEach(el => {
+            el.classList.remove('hover-row', 'hover-col');
+          });
         }
+      });
+      
+      // Инициализация группировки
+      setTimeout(() => toggleAll(true), 100);
+      
+      // Обработчик клика по логотипу
+      document.getElementById('logo-wrapper').addEventListener('click', () => { 
+        datePicker.click(); 
       });
     }
 
-    // Запускаем приложение
-    window.addEventListener('DOMContentLoaded', initApp);
+    window.addEventListener('load', init);
+    
+    // Предотвращаем контекстное меню на таблице
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.closest('#main-table')) {
+        e.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>
