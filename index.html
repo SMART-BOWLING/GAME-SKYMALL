@@ -2,21 +2,25 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ */
-    html {
-      transform: rotate(90deg);
-      transform-origin: center center;
-      width: 100vh;
-      height: 100vw;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin-top: -50vw;
-      margin-left: -50vh;
-      overflow: hidden;
+    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ - ОПТИМИЗИРОВАНО ДЛЯ МОБИЛЬНЫХ */
+    @media screen and (max-width: 1024px) and (orientation: portrait) {
+      html, body {
+        transform: rotate(90deg);
+        transform-origin: center center;
+        width: 100vh;
+        height: 100vw;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-top: -50vw;
+        margin-left: -50vh;
+        overflow: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x pan-y;
+      }
     }
     
     body {
@@ -30,6 +34,8 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .container {
@@ -38,6 +44,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .table-wrapper {
@@ -50,6 +57,7 @@
       border: 1px solid #d7dce3;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      touch-action: pan-x pan-y;
     }
 
     table {
@@ -242,11 +250,13 @@
 
     /* Адаптация для повернутого экрана */
     @media (max-width: 768px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
+      @media (orientation: portrait) {
+        html, body {
+          width: 100vh;
+          height: 100vw;
+          margin-top: -50vw;
+          margin-left: -50vh;
+        }
       }
       
       body { 
@@ -306,11 +316,13 @@
     }
 
     @media (max-width: 480px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
+      @media (orientation: portrait) {
+        html, body {
+          width: 100vh;
+          height: 100vw;
+          margin-top: -50vw;
+          margin-left: -50vh;
+        }
       }
       
       body { 
@@ -342,6 +354,18 @@
         height: 16px; 
         line-height: 14px; 
         padding: 0 3px;
+      }
+    }
+
+    /* Исправление для сенсорных устройств */
+    @media (hover: none) and (pointer: coarse) {
+      .toggle-btn {
+        min-width: 20px;
+        min-height: 20px;
+      }
+      
+      td, th {
+        touch-action: manipulation;
       }
     }
   </style>
@@ -426,15 +450,27 @@
       btn.title = title;
       btn.textContent = '+';
       let last = 0;
-      btn.onclick = () => {
+      
+      // Улучшенный обработчик для сенсорных устройств
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         const now = Date.now();
-        if (now - last < 300) toggleAll(!areAllHidden());
-        else {
+        if (now - last < 300) {
+          toggleAll(!areAllHidden());
+        } else {
           toggleGroup(idxs);
           btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
         }
         last = now;
-      };
+      });
+      
+      // Для сенсорных устройств добавляем обработчик touch
+      btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      
       return btn;
     }
 
@@ -630,6 +666,22 @@
     }
 
     window.addEventListener('load', init);
+    
+    // Дополнительные исправления для мобильных устройств
+    document.addEventListener('DOMContentLoaded', function() {
+      // Предотвращаем зум на элементах таблицы
+      document.addEventListener('touchstart', function(e) {
+        if (e.touches.length > 1) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      
+      // Оптимизация для сенсорных устройств
+      if ('ontouchstart' in window) {
+        document.body.style.touchAction = 'pan-x pan-y';
+        document.querySelector('.table-wrapper').style.touchAction = 'pan-x pan-y';
+      }
+    });
   </script>
 </body>
 </html>
