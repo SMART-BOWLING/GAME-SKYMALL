@@ -2,75 +2,76 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ */
-    html {
-      transform: rotate(90deg);
-      transform-origin: center center;
-      width: 100vh;
-      height: 100vw;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      margin-top: -50vw;
-      margin-left: -50vh;
+    /* УБИРАЕМ ПОВОРОТ И FIXED - ОСНОВНАЯ ПРОБЛЕМА СКРОЛЛА */
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
       overflow: hidden;
+      position: relative;
     }
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f4f6fa;
-      margin: 0;
-      padding: 8px; /* Уменьшено с 10px */
+      padding: 10px;
       color: #333;
-      width: 100%;
-      height: 100%;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+      touch-action: pan-x pan-y;
     }
 
+    /* Контейнер занимает всю доступную высоту */
     .container {
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 20px);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
+    /* ОБНОВЛЕННЫЙ СТИЛЬ ДЛЯ СКРОЛЛА */
     .table-wrapper {
-      overflow-x: auto;
-      overflow-y: auto;
-      position: relative;
-      -webkit-overflow-scrolling: touch;
       flex: 1;
-      margin: 0 auto;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
       border: 1px solid #d7dce3;
-      border-radius: 7px; /* Уменьшено */
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* Уменьшено */
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      background: white;
+      position: relative;
     }
 
+    /* Убираем min-width чтобы таблица могла расширяться */
     table {
       border-collapse: collapse;
-      width: auto;
       table-layout: fixed;
       background-color: white;
-      min-width: 720px; /* Уменьшено с 800px */
+      width: auto;
+      min-width: 100%;
     }
 
     td, th {
-      height: 20px; /* Уменьшено с 22px */
+      height: 22px;
       text-align: center;
-      font-size: 10px; /* Уменьшено с 11px */
+      font-size: 11px;
       border: 1px solid #d7dce3;
       box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
-      padding: 0 2px; /* Уменьшено */
+      padding: 0 3px;
     }
 
     th {
@@ -89,26 +90,36 @@
     #main-table th:nth-child(1),
     #main-table td:nth-child(1) {
       left: 0;
-      z-index: 3;
+      z-index: 10;
       background-color: #dc143c;
       color: white;
-      width: 36px; /* Уменьшено */
-      min-width: 36px; /* Уменьшено */
-      max-width: 36px; /* Уменьшено */
+      width: 40px;
+      min-width: 40px;
+      max-width: 40px;
     }
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 36px; /* Уменьшено */
-      z-index: 5;
+      left: 40px;
+      z-index: 9;
       background-color: #2c3e50;
       color: white;
-      width: 72px; /* Уменьшено */
-      min-width: 72px; /* Уменьшено */
-      max-width: 72px; /* Уменьшено */
+      width: 80px;
+      min-width: 80px;
+      max-width: 80px;
       overflow: hidden;
     }
 
-    /* Заголовки первой и второй строки */
+    /* Заголовки должны быть выше всех */
+    #letter-row th:nth-child(1),
+    #letter-row th:nth-child(2) {
+      z-index: 11 !important;
+    }
+    
+    #time-row th:nth-child(1),
+    #time-row th:nth-child(2) {
+      z-index: 10 !important;
+    }
+
     #letter-row th:nth-child(1),
     #letter-row th:nth-child(2),
     #time-row th:nth-child(1),
@@ -116,38 +127,45 @@
       background-color: #ecf0f1 !important;
       color: #2c3e50 !important;
       border: 0px solid #d7dce3 !important;
-      z-index: 4;
     }
 
     #letter-row th:nth-child(n+3) {
       background-color: #ecf0f1 !important;
       color: #2c3e50;
       border: 1px solid #e0e0e0 !important;
-      width: 20px; /* Уменьшено */
-      min-width: 20px; /* Уменьшено */
-      max-width: 20px; /* Уменьшено */
+      width: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      z-index: 8;
+      position: sticky;
+      top: 0;
     }
+    
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 1px; /* Уменьшено */
+      padding: 2px 1px;
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
-      width: 20px; /* Уменьшено */
-      min-width: 20px; /* Уменьшено */
-      max-width: 20px; /* Уменьшено */
+      width: 22px;
+      min-width: 22px;
+      max-width: 22px;
+      position: sticky;
+      top: 22px; /* высота первой строки заголовка */
+      z-index: 7;
     }
+    
     #time-row th div {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
     #time-row th .hour {
-      font-size: 9px; /* Уменьшено */
+      font-size: 10px;
       font-weight: bold;
     }
     #time-row th .minute {
-      font-size: 9px; /* Уменьшено */
+      font-size: 10px;
     }
 
     .hidden-column {
@@ -165,11 +183,11 @@
 
     #date-picker {
       width: 100%;
-      padding: 5px; /* Уменьшено */
-      font-size: 11px; /* Уменьшено */
+      padding: 6px;
+      font-size: 12px;
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 5px; /* Уменьшено */
+      border-radius: 6px;
       background-color: #ecf0f1;
       color: #1a2f40;
       box-sizing: border-box;
@@ -192,14 +210,14 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 2px; /* Уменьшено */
+      border-radius: 3px;
       font-weight: bold;
-      font-size: 10px; /* Уменьшено */
-      line-height: 16px; /* Уменьшено */
-      padding: 0 3px; /* Уменьшено */
+      font-size: 11px;
+      line-height: 18px;
+      padding: 0 4px;
       display: inline-block;
-      width: 7px; /* Уменьшено */
-      height: 18px; /* Уменьшено */
+      width: 8px;
+      height: 20px;
       text-align: center;
       transition: background-color 0.1s ease;
     }
@@ -209,8 +227,8 @@
 
     .loading {
       display: inline-block;
-      width: 14px; /* Уменьшено */
-      height: 14px; /* Уменьшено */
+      width: 16px;
+      height: 16px;
       border: 2px solid rgba(255,255,255,.3);
       border-radius: 50%;
       border-top-color: #fff;
@@ -224,11 +242,11 @@
     .status-message {
       display: none;
       text-align: center;
-      padding: 7px; /* Уменьшено */
-      margin: 7px 0; /* Уменьшено */
-      border-radius: 3px; /* Уменьшено */
+      padding: 8px;
+      margin: 8px 0;
+      border-radius: 4px;
       background-color: #f8f9fa;
-      font-size: 11px; /* Уменьшено */
+      font-size: 12px;
     }
 
     .error {
@@ -240,126 +258,113 @@
       color: #2e7d32;
     }
 
-    /* Логотип */
-    .logo-cell img {
-      width: 31px; /* Уменьшено */
-      height: 31px; /* Уменьшено */
-      border-radius: 0;
-    }
-
-    /* Адаптация для повернутого экрана */
+    /* ОПТИМИЗАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ */
     @media (max-width: 768px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
+      body { 
+        padding: 8px; 
       }
       
-      body { 
-        padding: 7px; /* Уменьшено */
-        font-size: 11px; /* Уменьшено */
+      .container {
+        height: calc(100vh - 16px);
       }
       
       .table-wrapper { 
-        border-radius: 5px; /* Уменьшено */
-      }
-      
-      table { 
-        min-width: 650px; /* Уменьшено */
+        border-radius: 6px;
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) { 
-        width: 32px; /* Уменьшено */
-        min-width: 32px; 
-        max-width: 32px; 
+        width: 35px; 
+        min-width: 35px; 
+        max-width: 35px; 
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) { 
-        left: 32px; /* Уменьшено */
-        width: 63px; /* Уменьшено */
-        min-width: 63px; 
-        max-width: 63px; 
+        left: 35px; 
+        width: 70px; 
+        min-width: 70px; 
+        max-width: 70px; 
       }
       
       td, th { 
-        font-size: 9px; /* Уменьшено */
-        height: 18px; /* Уменьшено */
-        padding: 0 1px; /* Уменьшено */
+        font-size: 10px; 
+        height: 20px; 
+        padding: 0 2px;
       }
       
       #time-row th .hour, 
       #time-row th .minute { 
-        font-size: 8px; /* Уменьшено */
+        font-size: 9px; 
       }
       
       .toggle-btn { 
-        font-size: 9px; /* Уменьшено */
-        height: 16px; /* Уменьшено */
-        line-height: 14px; /* Уменьшено */
+        font-size: 10px; 
+        height: 18px; 
+        line-height: 16px; 
       }
       
       #date-picker {
-        font-size: 10px; /* Уменьшено */
-        padding: 4px; /* Уменьшено */
-      }
-      
-      .status-message {
-        font-size: 9px; /* Уменьшено */
-        padding: 5px; /* Уменьшено */
-      }
-      
-      .logo-cell img {
-        width: 28px; /* Уменьшено */
-        height: 28px; /* Уменьшено */
+        font-size: 11px;
+        padding: 5px;
       }
     }
 
     @media (max-width: 480px) {
-      html {
-        width: 100vh;
-        height: 100vw;
-        margin-top: -50vw;
-        margin-left: -50vh;
+      body { 
+        padding: 5px; 
       }
       
-      body { 
-        padding: 4px; /* Уменьшено */
+      .container {
+        height: calc(100vh - 10px);
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) { 
-        width: 27px; /* Уменьшено */
-        min-width: 27px; 
-        max-width: 27px; 
+        width: 30px; 
+        min-width: 30px; 
+        max-width: 30px; 
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) { 
-        left: 27px; /* Уменьшено */
-        width: 54px; /* Уменьшено */
-        min-width: 54px; 
-        max-width: 54px; 
+        left: 30px; 
+        width: 60px; 
+        min-width: 60px; 
+        max-width: 60px; 
       }
       
       td, th { 
-        font-size: 8px; /* Уменьшено */
-        height: 16px; /* Уменьшено */
+        font-size: 9px; 
+        height: 18px; 
       }
       
       .toggle-btn { 
-        font-size: 8px; /* Уменьшено */
-        height: 14px; /* Уменьшено */
-        line-height: 12px; /* Уменьшено */
-        padding: 0 2px; /* Уменьшено */
+        font-size: 9px; 
+        height: 16px; 
+        line-height: 14px; 
+        padding: 0 3px;
       }
-      
-      .logo-cell img {
-        width: 25px; /* Уменьшено */
-        height: 25px; /* Уменьшено */
-      }
+    }
+
+    /* Дополнительные стили для лучшего скролла на iOS */
+    .table-wrapper::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 4px;
+    }
+    
+    .table-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #555;
     }
   </style>
 </head>
@@ -372,7 +377,7 @@
         <thead>
           <tr id="letter-row">
             <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" />
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:35px;height:35px;border-radius:0;" />
             </th>
             <th>
               <input type="date" id="date-picker" />
@@ -443,7 +448,8 @@
       btn.title = title;
       btn.textContent = '+';
       let last = 0;
-      btn.onclick = () => {
+      btn.onclick = (e) => {
+        e.stopPropagation(); // Предотвращаем всплытие
         const now = Date.now();
         if (now - last < 300) toggleAll(!areAllHidden());
         else {
@@ -643,6 +649,16 @@
       
       // Загрузка данных
       setTimeout(loadData, 500);
+      
+      // Предотвращаем масштабирование при двойном тапе на мобильных
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', function(event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      }, false);
     }
 
     window.addEventListener('load', init);
