@@ -5,30 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Данные по дате – 16 таблиц</title>
   <style>
-    /* УБИРАЕМ ПОВОРОТ ВСЕЙ СТРАНИЦЫ - ВМЕСТО ЭТОГО ПОВОРАЧИВАЕМ ТОЛЬКО КОНТЕЙНЕР */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f6fa;
-      margin: 0;
-      padding: 0;
-      color: #333;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .rotated-container {
+    /* ПОВОРОТ СТРАНИЦЫ НА 90 ГРАДУСОВ */
+    html {
       transform: rotate(90deg);
       transform-origin: center center;
       width: 100vh;
       height: 100vw;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-top: -50vw;
+      margin-left: -50vh;
+      overflow: hidden;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6fa;
+      margin: 0;
+      padding: 8px; /* Уменьшено с 10px */
+      color: #333;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      padding: 10px;
-      box-sizing: border-box;
     }
 
     .container {
@@ -47,9 +48,8 @@
       flex: 1;
       margin: 0 auto;
       border: 1px solid #d7dce3;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      background: white;
+      border-radius: 7px; /* Уменьшено */
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* Уменьшено */
     }
 
     table {
@@ -57,20 +57,20 @@
       width: auto;
       table-layout: fixed;
       background-color: white;
-      min-width: 800px;
+      min-width: 720px; /* Уменьшено с 800px */
     }
 
     td, th {
-      height: 22px;
+      height: 20px; /* Уменьшено с 22px */
       text-align: center;
-      font-size: 11px;
+      font-size: 10px; /* Уменьшено с 11px */
       border: 1px solid #d7dce3;
       box-sizing: border-box;
       white-space: nowrap;
       vertical-align: middle;
       position: relative;
       transition: background-color 0.2s ease;
-      padding: 0 3px;
+      padding: 0 2px; /* Уменьшено */
     }
 
     th {
@@ -89,35 +89,26 @@
     #main-table th:nth-child(1),
     #main-table td:nth-child(1) {
       left: 0;
-      z-index: 30;
+      z-index: 3;
       background-color: #dc143c;
       color: white;
-      width: 40px;
-      min-width: 40px;
-      max-width: 40px;
-      font-weight: bold;
+      width: 36px; /* Уменьшено */
+      min-width: 36px; /* Уменьшено */
+      max-width: 36px; /* Уменьшено */
     }
     #main-table th:nth-child(2),
     #main-table td:nth-child(2) {
-      left: 40px;
-      z-index: 25;
+      left: 36px; /* Уменьшено */
+      z-index: 5;
       background-color: #2c3e50;
       color: white;
-      width: 80px;
-      min-width: 80px;
-      max-width: 80px;
+      width: 72px; /* Уменьшено */
+      min-width: 72px; /* Уменьшено */
+      max-width: 72px; /* Уменьшено */
       overflow: hidden;
-      font-weight: bold;
     }
 
-    /* Фиксированные заголовки */
-    #letter-row,
-    #time-row {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-    
+    /* Заголовки первой и второй строки */
     #letter-row th:nth-child(1),
     #letter-row th:nth-child(2),
     #time-row th:nth-child(1),
@@ -125,29 +116,26 @@
       background-color: #ecf0f1 !important;
       color: #2c3e50 !important;
       border: 0px solid #d7dce3 !important;
-      z-index: 40;
+      z-index: 4;
     }
 
     #letter-row th:nth-child(n+3) {
       background-color: #ecf0f1 !important;
       color: #2c3e50;
       border: 1px solid #e0e0e0 !important;
-      width: 22px;
-      min-width: 22px;
-      max-width: 22px;
-      z-index: 15;
+      width: 20px; /* Уменьшено */
+      min-width: 20px; /* Уменьшено */
+      max-width: 20px; /* Уменьшено */
     }
     #time-row th:nth-child(n+3) {
       white-space: normal;
-      padding: 2px 1px;
+      padding: 1px; /* Уменьшено */
       line-height: 1;
       vertical-align: middle;
       border: 1px solid #e0e0e0;
-      width: 22px;
-      min-width: 22px;
-      max-width: 22px;
-      background-color: #ecf0f1;
-      z-index: 10;
+      width: 20px; /* Уменьшено */
+      min-width: 20px; /* Уменьшено */
+      max-width: 20px; /* Уменьшено */
     }
     #time-row th div {
       display: flex;
@@ -155,11 +143,11 @@
       align-items: center;
     }
     #time-row th .hour {
-      font-size: 10px;
+      font-size: 9px; /* Уменьшено */
       font-weight: bold;
     }
     #time-row th .minute {
-      font-size: 10px;
+      font-size: 9px; /* Уменьшено */
     }
 
     .hidden-column {
@@ -169,27 +157,19 @@
       background-color: #2c3e50;
       color: #fff;
       font-weight: 700;
-      position: relative;
-    }
-    .active-cell::after {
-      content: '🎳';
-      font-size: 10px;
     }
     td.hover-row, th.hover-row,
     td.hover-col, th.hover-col {
-      background-color: rgba(250, 132, 156, 0.3) !important;
-    }
-    td.hover-col.active-cell {
-      background-color: #4a6278 !important;
+      background-color: #fa849c !important;
     }
 
     #date-picker {
       width: 100%;
-      padding: 6px;
-      font-size: 12px;
+      padding: 5px; /* Уменьшено */
+      font-size: 11px; /* Уменьшено */
       font-family: 'Arial Black','Impact', sans-serif;
       border: 1px solid #ecf0f1;
-      border-radius: 6px;
+      border-radius: 5px; /* Уменьшено */
       background-color: #ecf0f1;
       color: #1a2f40;
       box-sizing: border-box;
@@ -197,19 +177,13 @@
       -webkit-appearance: none;
       appearance: none;
       outline: none;
-      font-weight: bold;
     }
     #date-picker:hover {
       background-color: #e0e0e0;
     }
-    #date-picker:focus {
-      background-color: white;
-      border-color: #dc143c;
-    }
     #date-picker::-webkit-calendar-picker-indicator {
       filter: invert(0.3);
       cursor: pointer;
-      padding: 2px;
     }
 
     /* Кнопки группировки */
@@ -218,30 +192,25 @@
       user-select: none;
       color: #fff;
       background-color: #1a2f40;
-      border-radius: 3px;
+      border-radius: 2px; /* Уменьшено */
       font-weight: bold;
-      font-size: 11px;
-      line-height: 18px;
-      padding: 0 4px;
+      font-size: 10px; /* Уменьшено */
+      line-height: 16px; /* Уменьшено */
+      padding: 0 3px; /* Уменьшено */
       display: inline-block;
-      width: 8px;
-      height: 20px;
+      width: 7px; /* Уменьшено */
+      height: 18px; /* Уменьшено */
       text-align: center;
-      transition: all 0.2s ease;
-      position: absolute;
-      right: 2px;
-      top: 50%;
-      transform: translateY(-50%);
+      transition: background-color 0.1s ease;
     }
     .toggle-btn:hover {
       background-color: #dc143c;
-      transform: translateY(-50%) scale(1.1);
     }
 
     .loading {
       display: inline-block;
-      width: 16px;
-      height: 16px;
+      width: 14px; /* Уменьшено */
+      height: 14px; /* Уменьшено */
       border: 2px solid rgba(255,255,255,.3);
       border-radius: 50%;
       border-top-color: #fff;
@@ -252,261 +221,171 @@
       to { transform: rotate(360deg); }
     }
 
-    .controls {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .control-btn {
-      padding: 6px 12px;
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      transition: background-color 0.2s;
-    }
-    
-    .control-btn:hover {
-      background-color: #dc143c;
-    }
-    
-    .current-date {
-      flex-grow: 1;
+    .status-message {
+      display: none;
       text-align: center;
-      font-weight: bold;
-      color: #2c3e50;
-      padding: 6px;
-      background-color: #ecf0f1;
-      border-radius: 4px;
+      padding: 7px; /* Уменьшено */
+      margin: 7px 0; /* Уменьшено */
+      border-radius: 3px; /* Уменьшено */
+      background-color: #f8f9fa;
+      font-size: 11px; /* Уменьшено */
     }
 
-    .cell-legend {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-      margin-right: 4px;
-      vertical-align: middle;
-    }
-    
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 10px;
-      font-size: 11px;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
+    .error {
+      background-color: #ffebee !important;
+      color: #c62828 !important;
     }
 
-    /* Улучшенный скроллбар */
-    .table-wrapper::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
-    }
-    
-    .table-wrapper::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 6px;
-    }
-    
-    .table-wrapper::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 6px;
-    }
-    
-    .table-wrapper::-webkit-scrollbar-thumb:hover {
-      background: #a8a8a8;
+    .success {
+      color: #2e7d32;
     }
 
-    /* Адаптация для мобильных */
+    /* Логотип */
+    .logo-cell img {
+      width: 31px; /* Уменьшено */
+      height: 31px; /* Уменьшено */
+      border-radius: 0;
+    }
+
+    /* Адаптация для повернутого экрана */
     @media (max-width: 768px) {
-      .rotated-container {
-        padding: 8px;
+      html {
+        width: 100vh;
+        height: 100vw;
+        margin-top: -50vw;
+        margin-left: -50vh;
+      }
+      
+      body { 
+        padding: 7px; /* Уменьшено */
+        font-size: 11px; /* Уменьшено */
       }
       
       .table-wrapper { 
-        border-radius: 6px;
+        border-radius: 5px; /* Уменьшено */
       }
       
       table { 
-        min-width: 800px; 
+        min-width: 650px; /* Уменьшено */
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) { 
-        width: 35px; 
-        min-width: 35px; 
-        max-width: 35px; 
+        width: 32px; /* Уменьшено */
+        min-width: 32px; 
+        max-width: 32px; 
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) { 
-        left: 35px; 
-        width: 70px; 
-        min-width: 70px; 
-        max-width: 70px; 
+        left: 32px; /* Уменьшено */
+        width: 63px; /* Уменьшено */
+        min-width: 63px; 
+        max-width: 63px; 
       }
       
       td, th { 
-        font-size: 10px; 
-        height: 20px; 
-        padding: 0 2px;
+        font-size: 9px; /* Уменьшено */
+        height: 18px; /* Уменьшено */
+        padding: 0 1px; /* Уменьшено */
       }
       
       #time-row th .hour, 
       #time-row th .minute { 
-        font-size: 9px; 
+        font-size: 8px; /* Уменьшено */
       }
       
       .toggle-btn { 
-        font-size: 10px; 
-        height: 18px; 
-        line-height: 16px; 
+        font-size: 9px; /* Уменьшено */
+        height: 16px; /* Уменьшено */
+        line-height: 14px; /* Уменьшено */
       }
       
       #date-picker {
-        font-size: 11px;
-        padding: 5px;
+        font-size: 10px; /* Уменьшено */
+        padding: 4px; /* Уменьшено */
       }
       
-      .controls {
-        flex-direction: column;
+      .status-message {
+        font-size: 9px; /* Уменьшено */
+        padding: 5px; /* Уменьшено */
+      }
+      
+      .logo-cell img {
+        width: 28px; /* Уменьшено */
+        height: 28px; /* Уменьшено */
       }
     }
 
     @media (max-width: 480px) {
-      .rotated-container {
-        padding: 5px;
+      html {
+        width: 100vh;
+        height: 100vw;
+        margin-top: -50vw;
+        margin-left: -50vh;
+      }
+      
+      body { 
+        padding: 4px; /* Уменьшено */
       }
       
       #main-table th:nth-child(1),
       #main-table td:nth-child(1) { 
-        width: 30px; 
-        min-width: 30px; 
-        max-width: 30px; 
+        width: 27px; /* Уменьшено */
+        min-width: 27px; 
+        max-width: 27px; 
       }
       
       #main-table th:nth-child(2),
       #main-table td:nth-child(2) { 
-        left: 30px; 
-        width: 60px; 
-        min-width: 60px; 
-        max-width: 60px; 
+        left: 27px; /* Уменьшено */
+        width: 54px; /* Уменьшено */
+        min-width: 54px; 
+        max-width: 54px; 
       }
       
       td, th { 
-        font-size: 9px; 
-        height: 18px; 
+        font-size: 8px; /* Уменьшено */
+        height: 16px; /* Уменьшено */
       }
       
       .toggle-btn { 
-        font-size: 9px; 
-        height: 16px; 
-        line-height: 14px; 
-        padding: 0 3px;
+        font-size: 8px; /* Уменьшено */
+        height: 14px; /* Уменьшено */
+        line-height: 12px; /* Уменьшено */
+        padding: 0 2px; /* Уменьшено */
       }
-    }
-    
-    /* Улучшенная анимация загрузки */
-    .loading-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255,255,255,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      font-size: 14px;
-      color: #2c3e50;
-      flex-direction: column;
-      gap: 10px;
-      border-radius: 8px;
-    }
-    
-    /* Кнопка "Наверх" для быстрой прокрутки */
-    .scroll-top-btn {
-      position: absolute;
-      right: 20px;
-      bottom: 20px;
-      background-color: #dc143c;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    
-    .scroll-top-btn:hover {
-      background-color: #2c3e50;
+      
+      .logo-cell img {
+        width: 25px; /* Уменьшено */
+        height: 25px; /* Уменьшено */
+      }
     }
   </style>
 </head>
 <body>
-  <div class="rotated-container">
-    <div class="container">
-      <div class="controls">
-        <button class="control-btn" id="prev-day">← Назад</button>
-        <div class="current-date" id="current-date"></div>
-        <button class="control-btn" id="next-day">Вперед →</button>
-        <button class="control-btn" id="toggle-all">Развернуть все</button>
-        <button class="control-btn" id="today-btn">Сегодня</button>
-      </div>
-      
-      <div class="table-wrapper" id="table-wrapper">
-        <table id="main-table">
-          <thead>
-            <tr id="letter-row">
-              <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
-                <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" style="width:35px;height:35px;border-radius:0;" />
-              </th>
-              <th>
-                <input type="date" id="date-picker" />
-              </th>
-            </tr>
-            <tr id="time-row">
-              <th>LANE</th>
-              <th id="overall-total">0ч 0м</th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-      
-      <div class="legend">
-        <div class="legend-item">
-          <span class="cell-legend" style="background-color: #2c3e50;"></span>
-          <span>Броски</span>
-        </div>
-        <div class="legend-item">
-          <span class="cell-legend" style="background-color: transparent; border: 1px solid #dc143c; color: #dc143c;">⚡︎</span>
-          <span>Нет данных</span>
-        </div>
-        <div class="legend-item">
-          <span class="cell-legend" style="background-color: white;"></span>
-          <span>Без бросков</span>
-        </div>
-      </div>
-    </div>
+  <div class="container">
+    <div id="status" class="status-message"></div>
     
-    <button class="scroll-top-btn" id="scroll-top-btn">↑</button>
+    <div class="table-wrapper">
+      <table id="main-table">
+        <thead>
+          <tr id="letter-row">
+            <th class="logo-cell" id="logo-wrapper" style="cursor: pointer;">
+              <img src="https://i.postimg.cc/SQ3RgNsQ/image.png" alt="Logo" />
+            </th>
+            <th>
+              <input type="date" id="date-picker" />
+            </th>
+          </tr>
+          <tr id="time-row">
+            <th>LANE</th>
+            <th id="overall-total">0ч 0м</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -517,14 +396,7 @@
           overallTotal = document.getElementById('overall-total'),
           tableBody = document.getElementById('table-body'),
           datePicker = document.getElementById('date-picker'),
-          currentDateEl = document.getElementById('current-date'),
-          prevDayBtn = document.getElementById('prev-day'),
-          nextDayBtn = document.getElementById('next-day'),
-          toggleAllBtn = document.getElementById('toggle-all'),
-          todayBtn = document.getElementById('today-btn'),
-          tableWrapper = document.getElementById('table-wrapper'),
-          scrollTopBtn = document.getElementById('scroll-top-btn');
-    
+          statusEl = document.getElementById('status');
     const allGroups = [], allDataCells = [];
     let isLoading = false;
     const fetchControllers = new Map();
@@ -533,16 +405,6 @@
       const h = Math.floor(mins / 60);
       const m = mins % 60;
       return `${h}ч ${m}м`;
-    }
-
-    function formatDateForDisplay(dateStr) {
-      const date = new Date(dateStr);
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString('ru-RU', options);
-    }
-
-    function updateDateDisplay(dateStr) {
-      currentDateEl.textContent = formatDateForDisplay(dateStr);
     }
 
     function toggleGroup(idxs) {
@@ -573,7 +435,6 @@
         }
       });
       document.querySelectorAll('.toggle-btn').forEach(b => b.textContent = shouldHide ? '+' : '–');
-      toggleAllBtn.textContent = shouldHide ? 'Развернуть все' : 'Свернуть все';
     }
 
     function makeBtn(idxs, title) {
@@ -582,12 +443,10 @@
       btn.title = title;
       btn.textContent = '+';
       let last = 0;
-      btn.onclick = (e) => {
-        e.stopPropagation();
+      btn.onclick = () => {
         const now = Date.now();
-        if (now - last < 300) {
-          toggleAll(!areAllHidden());
-        } else {
+        if (now - last < 300) toggleAll(!areAllHidden());
+        else {
           toggleGroup(idxs);
           btn.textContent = timeRow.children[idxs[0]+2].classList.contains('hidden-column') ? '+' : '–';
         }
@@ -651,20 +510,15 @@
           c.classList.remove('active-cell');
           c.textContent = '';
           c.style.color = '';
-          c.style.backgroundColor = '';
         });
       });
     }
 
-    function createLoadingOverlay() {
-      const overlay = document.createElement('div');
-      overlay.className = 'loading-overlay';
-      overlay.innerHTML = `
-        <div class="loading"></div>
-        <div>Загрузка данных...</div>
-      `;
-      tableWrapper.appendChild(overlay);
-      return overlay;
+    function setStatus(message, isError = false) {
+      console.log(message);
+      if (isError) {
+        console.error(message);
+      }
     }
 
     async function loadLaneData(idx, selectedDate) {
@@ -677,25 +531,18 @@
         const data = await response.json();
         if (data.error) throw new Error(data.error);
         return data;
-      } finally { 
-        fetchControllers.delete(idx); 
-      }
+      } finally { fetchControllers.delete(idx); }
     }
 
     async function loadData() {
       if (!datePicker.value || isLoading) return;
-      
       isLoading = true;
-      const loadingOverlay = createLoadingOverlay();
       clearRows();
-      
+      setStatus('Загрузка данных...');
       const selectedDate = datePicker.value;
-      updateDateDisplay(selectedDate);
-      
       let done = 0, sumAll = 0;
       const errors = [];
       const promises = [];
-      
       try {
         for (let idx = 0; idx < allDataCells.length; idx++) {
           promises.push(
@@ -706,23 +553,24 @@
                 row.cells.forEach((cell, i) => {
                   const time = `${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}`;
                   cell.classList.remove('active-cell');
-                  cell.textContent = '';
-                  
                   if (data.c && data.c.includes(time)) { 
                     cell.classList.add('active-cell'); 
+                    cell.textContent = '🎳'; 
                     sum++; 
                   }
                   else if (data.b && data.b.includes(time)) { 
-                    cell.style.backgroundColor = '#f8f9fa';
+                    cell.textContent = ''; 
+                    cell.style.color = 'black'; 
                   }
                   else { 
                     cell.textContent = '⚡︎'; 
-                    cell.style.color = '#dc143c';
+                    cell.style.color = '#dc143c'; 
                   }
                 });
                 row.header.textContent = formatMinutes(sum);
                 sumAll += sum;
                 done++;
+                setStatus(`Загружено ${done} из 16 дорожек...`);
               })
               .catch(err => { 
                 console.error(`Ошибка дорожки ${idx+1}:`, err); 
@@ -731,77 +579,24 @@
               })
           );
         }
-        
         await Promise.allSettled(promises);
         overallTotal.textContent = formatMinutes(sumAll);
-        
         if (errors.length > 0) {
-          console.warn(`Загрузка завершена с ошибками: ${errors.join('; ')}`);
+          setStatus(`Загрузка завершена с ошибками: ${errors.join('; ')}`, true);
         } else {
-          console.log(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
+          setStatus(`Данные за ${selectedDate} успешно загружены. Всего: ${formatMinutes(sumAll)}`);
         }
       } catch (error) { 
         console.error('Общая ошибка:', error); 
+        setStatus(`Ошибка загрузки: ${error.message}`, true); 
       }
-      finally { 
-        isLoading = false; 
-        if (loadingOverlay && loadingOverlay.parentNode) {
-          loadingOverlay.parentNode.removeChild(loadingOverlay);
-        }
-      }
-    }
-
-    function navigateDate(days) {
-      const currentDate = new Date(datePicker.value);
-      currentDate.setDate(currentDate.getDate() + days);
-      const newDate = currentDate.toISOString().split('T')[0];
-      datePicker.value = newDate;
-      loadData();
-    }
-
-    function setToday() {
-      const t = new Date();
-      const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
-      datePicker.value = iso;
-      loadData();
+      finally { isLoading = false; }
     }
 
     function init() {
       buildHeaders();
       buildBody();
-      
-      // Устанавливаем сегодняшнюю дату по умолчанию
-      setToday();
-      
-      // Назначаем обработчики событий
       datePicker.addEventListener('change', loadData);
-      prevDayBtn.addEventListener('click', () => navigateDate(-1));
-      nextDayBtn.addEventListener('click', () => navigateDate(1));
-      toggleAllBtn.addEventListener('click', () => toggleAll());
-      todayBtn.addEventListener('click', setToday);
-      
-      // Обработчик скролла для кнопки "Наверх"
-      tableWrapper.addEventListener('scroll', () => {
-        if (tableWrapper.scrollTop > 200) {
-          scrollTopBtn.style.display = 'flex';
-        } else {
-          scrollTopBtn.style.display = 'none';
-        }
-      });
-      
-      scrollTopBtn.addEventListener('click', () => {
-        tableWrapper.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-      
-      // Добавляем горячие клавиши
-      document.addEventListener('keydown', (e) => {
-        if (e.target !== datePicker) {
-          if (e.key === 'ArrowLeft') navigateDate(-1);
-          if (e.key === 'ArrowRight') navigateDate(1);
-          if (e.key === 't' || e.key === 'T') setToday();
-          if (e.key === 'a' || e.key === 'A') toggleAll();
-        }
-      });
       
       // Добавляем обработчики для подсветки строк и столбцов
       document.addEventListener('mouseover', function(e) {
@@ -833,6 +628,11 @@
         }
       });
       
+      // Устанавливаем сегодняшнюю дату по умолчанию
+      const t = new Date();
+      const iso = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+      datePicker.value = iso;
+      
       // Инициализация группировки
       setTimeout(() => toggleAll(true), 100);
       
@@ -840,36 +640,12 @@
       document.getElementById('logo-wrapper').addEventListener('click', () => { 
         datePicker.click(); 
       });
+      
+      // Загрузка данных
+      setTimeout(loadData, 500);
     }
 
     window.addEventListener('load', init);
-    
-    // Предотвращаем контекстное меню на таблице
-    document.addEventListener('contextmenu', (e) => {
-      if (e.target.closest('#main-table')) {
-        e.preventDefault();
-      }
-    });
-    
-    // Улучшаем работу сенсорного скролла
-    let isScrolling = false;
-    let startY = 0;
-    let startX = 0;
-    
-    tableWrapper.addEventListener('touchstart', (e) => {
-      isScrolling = true;
-      startY = e.touches[0].pageY;
-      startX = e.touches[0].pageX;
-    });
-    
-    tableWrapper.addEventListener('touchmove', (e) => {
-      if (!isScrolling) return;
-      e.preventDefault();
-    });
-    
-    tableWrapper.addEventListener('touchend', () => {
-      isScrolling = false;
-    });
   </script>
 </body>
 </html>
